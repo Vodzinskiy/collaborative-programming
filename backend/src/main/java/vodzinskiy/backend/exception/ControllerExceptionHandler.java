@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import vodzinskiy.backend.dto.response.ErrorResponse;
+import vodzinskiy.backend.dto.ErrorResponse;
 
 @ControllerAdvice
 public class ControllerExceptionHandler {

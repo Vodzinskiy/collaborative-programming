@@ -1,4 +1,4 @@
-package vodzinskiy.backend.dto.response;
+package vodzinskiy.backend.dto;
 
 import java.time.LocalDateTime;
 

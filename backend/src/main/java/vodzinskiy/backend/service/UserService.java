@@ -2,10 +2,11 @@ package vodzinskiy.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vodzinskiy.backend.dto.RegistrationRequest;
-import vodzinskiy.backend.dto.UserDto;
+import vodzinskiy.backend.dto.UserRequest;
+import vodzinskiy.backend.dto.UserResponse;
 import vodzinskiy.backend.exception.AlreadyExistsException;
 import vodzinskiy.backend.exception.NotFoundException;
+import vodzinskiy.backend.mapper.UserMapper;
 import vodzinskiy.backend.model.User;
 import vodzinskiy.backend.repository.UserRepository;
 
@@ -14,29 +15,38 @@ import java.util.UUID;
 
 @Service
 public class UserService {
+
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
     }
 
-    public UserDto createUser(RegistrationRequest request) {
+    public UserResponse createUser(UserRequest request) {
         throwIfUserExists(request.email(), "email");
         throwIfUserExists(request.username(), "username");
 
         User user = new User(request.username(), request.email(), request.password());
         userRepository.save(user);
-        return new UserDto(user.getId(), user.getUsername(), user.getEmail());
+        return new UserResponse(user.getId(), user.getUsername(), user.getEmail());
     }
 
-    public UserDto getUser(UUID id) {
+    public User getUser(UUID id) {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isEmpty()) {
             throw new NotFoundException(String.format("User with id %s not found", id));
         }
-        User user = optionalUser.get();
-        return new UserDto(user.getId(), user.getUsername(), user.getEmail());
+        return optionalUser.get();
+    }
+
+    public UserResponse editUser(UUID id, UserRequest request) {
+        User user = getUser(id);
+        userMapper.updateUserFromUserRequest(request, user);
+        userRepository.save(user);
+        return new UserResponse(user.getId(), user.getUsername(), user.getEmail());
     }
 
     private void throwIfUserExists(String value, String fieldName) {

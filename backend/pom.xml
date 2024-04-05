@@ -15,6 +15,7 @@
 	<description>backend</description>
 	<properties>
 		<java.version>21</java.version>
+		<mapstruct.verson>1.6.0.Beta1</mapstruct.verson>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -49,6 +50,16 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>${mapstruct.verson}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct-processor</artifactId>
+			<version>${mapstruct.verson}</version>
 		</dependency>
 	</dependencies>
 

@@ -19,7 +19,7 @@ public class User {
     @Column(unique = true, nullable = false)
     private String username;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String email;
 
     private String password;
@@ -28,5 +28,10 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = password;
+    }
+
+    public User(String username, String email) {
+        this.username = username;
+        this.email = email;
     }
 }

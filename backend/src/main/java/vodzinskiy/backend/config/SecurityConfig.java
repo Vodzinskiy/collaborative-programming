@@ -18,6 +18,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
+import vodzinskiy.backend.service.impl.OAuth2UserService;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -28,6 +29,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
+    private final OAuth2UserService oAuth2UserService;
 
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -64,8 +66,13 @@ public class SecurityConfig {
                 .httpBasic(withDefaults())
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionFixation(SessionManagementConfigurer.SessionFixationConfigurer::newSession)
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo ->
+                                userInfo.userService(oAuth2UserService)
+                        )
+                        .defaultSuccessUrl("/", true)
                 );
-
         return http.build();
     }
 }

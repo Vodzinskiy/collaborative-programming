@@ -1,6 +1,7 @@
 package vodzinskiy.backend.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -14,6 +15,7 @@ import java.util.logging.Logger;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OAuth2UserService extends DefaultOAuth2UserService {
 
     private final Logger logger = Logger.getLogger(this.getClass().getName());
@@ -28,9 +30,10 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 
     private void processOAuth2User(OAuth2User oAuth2User) {
         logger.info("User attributes: " + oAuth2User.getAttributes());
+
         String username = Optional.ofNullable(oAuth2User.getAttributes().get("name"))
                 .map(Object::toString)
-                .orElse(oAuth2User.getAttributes().get("login").toString());
+                .orElseGet(() -> oAuth2User.getAttributes().get("login").toString());
         String email = Optional.ofNullable(oAuth2User.getAttributes().get("email"))
                 .map(Object::toString)
                 .orElse(null);

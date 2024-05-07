@@ -11,6 +11,7 @@ import {MatIcon} from "@angular/material/icon";
 import {MatAnchor, MatButton, MatFabButton, MatIconButton, MatMiniFabButton} from "@angular/material/button";
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
 import {MatDivider} from "@angular/material/divider";
+import {WorkSpaceModule} from "./modules/workspace/work-space.module";
 
 @NgModule({
   declarations: [AppComponent,
@@ -19,6 +20,7 @@ import {MatDivider} from "@angular/material/divider";
     BrowserModule,
     CommonModule,
     AuthModule,
+    WorkSpaceModule,
     AppRoutingModule,
     MatToolbar,
     MatIcon,

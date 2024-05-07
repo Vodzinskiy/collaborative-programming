@@ -1,0 +1,21 @@
+.resizer {
+  width: 3px;
+  background-color: yellow;
+  cursor: col-resize;
+}
+
+.d-flex.flex-row .d-flex.flex-column {
+  position: relative;
+}
+
+.button-close, .button-open {
+  position: absolute;
+  background-color: transparent;
+  top: 50%;
+  border: none;
+}
+
+.button-close {
+  right: 5px;
+}
+

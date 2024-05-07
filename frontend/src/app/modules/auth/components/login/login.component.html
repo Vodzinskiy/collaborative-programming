@@ -1,0 +1,25 @@
+<div class="auth-window">
+  <mat-card class="d-flex flex-column align-items-center">
+    <mat-card-header class="mb-3">
+      <mat-card-title>Вхід</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form class="d-flex flex-column align-items-center" [formGroup]="signinForm">
+        <app-custom-input [control]="getControl('email')"
+          placeholder="Електронна пошта"
+          requiredErrorMessage="Введіть електронну адресу">
+        </app-custom-input>
+        <app-custom-input [control]="getControl('password')"
+          placeholder="Пароль"
+          requiredErrorMessage="Введіть пароль"
+          isPassword="true">
+        </app-custom-input>
+      </form>
+    </mat-card-content>
+    <mat-card-actions class="d-flex justify-content-evenly w-100">
+      <button routerLink="/signup" mat-stroked-button color="primary">Зареєструватися</button>
+      <button (click)="onSubmit()" mat-raised-button color="primary">Увійти</button>
+    </mat-card-actions>
+    <app-social-login></app-social-login>
+  </mat-card>
+</div>

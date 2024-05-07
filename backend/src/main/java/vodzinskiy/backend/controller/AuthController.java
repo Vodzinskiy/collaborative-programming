@@ -3,16 +3,17 @@ package vodzinskiy.backend.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 import vodzinskiy.backend.dto.LoginRequest;
 import vodzinskiy.backend.service.AuthenticationService;
 
 
 @RestController
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -24,5 +25,14 @@ public class AuthController {
                                        HttpServletResponse response) {
         authenticationService.signin(loginRequest, request, response);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/session")
+    public ResponseEntity<Void> checkSession(Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).build();
+        }
     }
 }

@@ -1,0 +1,41 @@
+<mat-toolbar color="primary" class="d-flex align-content-center justify-content-between">
+  <div>
+    <button mat-button [matMenuTriggerFor]="file">Файл</button>
+    <button mat-button [matMenuTriggerFor]="project">Поєкт</button>
+  </div>
+  <div *ngIf="!isLoading">
+    <div *ngIf="(authService.isAuthenticated$ | async); else notAuthenticated">
+      <button mat-stroked-button color="accent" class="mx-4" [matMenuTriggerFor]="projectMember">{{projectName}}</button>
+      <button mat-mini-fab color="warn" [matMenuTriggerFor]="profile">{{ firstLetter }}</button>
+    </div>
+    <ng-template #notAuthenticated>
+      <button routerLink="/signup" class="mx-2" mat-stroked-button>Зареєструватись</button>
+      <button routerLink="/login" class="mx-2" mat-raised-button>Вхід</button>
+    </ng-template>
+  </div>
+</mat-toolbar>
+
+<mat-menu #profile="matMenu" class="mt-1">
+  <span>LONG NAME</span>
+  <button mat-menu-item>Settings</button>
+  <button mat-menu-item disabled>Appearance</button>
+  <button mat-menu-item (click)="signout()">Sign out</button>
+</mat-menu>
+
+<mat-menu #projectMember="matMenu" class="mt-1">
+  <span mat-menu-item *ngFor="let name of testName" [textContent]="name"></span>
+</mat-menu>
+
+<mat-menu #file="matMenu" class="mt-1">
+  <button mat-menu-item>Новий</button>
+  <mat-divider></mat-divider>
+  <button mat-menu-item disabled>Зберегти</button>
+  <button mat-menu-item disabled>Зберегти Все</button>
+</mat-menu>
+
+<mat-menu #project="matMenu" class="mt-1">
+  <button mat-menu-item>Створити</button>
+  <button mat-menu-item>Доєднатись</button>
+  <button mat-menu-item>Від'єднатись</button>
+  <button mat-menu-item>Видалити</button>
+</mat-menu>

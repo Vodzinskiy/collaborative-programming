@@ -13,6 +13,7 @@ import java.util.UUID;
 
 
 @RestController
+@RequestMapping("/api")
 public class UserController {
 
     private final UserRepository userRepository;
@@ -23,7 +24,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/signup")
+    @PostMapping("/auth/signup")
     public ResponseEntity<UserResponse> registerUser(@RequestBody UserRequest request) {
         UserResponse user = userService.createUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);

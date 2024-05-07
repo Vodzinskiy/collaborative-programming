@@ -1,0 +1,15 @@
+<mat-form-field [ngClass]="{'has-error': control.invalid && (control.dirty || control.touched)}">
+  <input matInput
+         [type]="isPassword ? (showPassword ? 'text' : 'password') : 'text'"
+         [placeholder]="placeholder"
+         [formControl]="control">
+  <mat-icon matSuffix (click)="toggleShowPassword()" *ngIf="isPassword">
+    {{ showPassword ? 'visibility_off' : 'visibility' }}
+  </mat-icon>
+  <mat-error *ngIf="control.errors?.['required']">
+    {{ requiredErrorMessage }}
+  </mat-error>
+  <mat-error *ngIf="control.errors?.['email']">
+    Введіть валідний email
+  </mat-error>
+</mat-form-field>

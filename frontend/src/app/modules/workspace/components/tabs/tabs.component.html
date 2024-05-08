@@ -1,0 +1,10 @@
+<mat-tab-group mat-stretch-tabs="false" class="d-flex flex-grow-1" dynamicHeight>
+  <mat-tab *ngFor="let tab of tabs; let index = index">
+    <ng-template mat-tab-label>
+      <span>{{tab.title}}</span>
+      <button style="pointer-events: auto;" (click)="closeTab(index);$event.stopPropagation()" mat-icon-button><mat-icon>close</mat-icon></button>
+    </ng-template>
+    <app-document-content class="d-flex flex-grow-1"></app-document-content>
+  </mat-tab>
+</mat-tab-group>
+

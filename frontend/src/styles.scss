@@ -61,3 +61,15 @@ mat-card {
   background-color: white;
   padding: 24px;
 }
+
+.mat-mdc-tab-header {
+  --mdc-secondary-navigation-tab-container-height: 32px;
+}
+
+.mat-mdc-tab-body-wrapper {
+  flex-grow: 1;
+}
+
+.mat-mdc-tab-body-content {
+  display: flex;
+}

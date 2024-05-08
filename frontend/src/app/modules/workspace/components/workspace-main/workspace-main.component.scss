@@ -9,6 +9,7 @@
 }
 
 .button-close, .button-open {
+  z-index: 2;
   position: absolute;
   background-color: transparent;
   top: 50%;

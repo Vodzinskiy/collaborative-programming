@@ -12,6 +12,7 @@ import {MatAnchor, MatButton, MatFabButton, MatIconButton, MatMiniFabButton} fro
 import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
 import {MatDivider} from "@angular/material/divider";
 import {WorkSpaceModule} from "./modules/workspace/work-space.module";
+import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 
 @NgModule({
   declarations: [AppComponent,
@@ -19,6 +20,7 @@ import {WorkSpaceModule} from "./modules/workspace/work-space.module";
   imports: [
     BrowserModule,
     CommonModule,
+    MonacoEditorModule.forRoot(),
     AuthModule,
     WorkSpaceModule,
     AppRoutingModule,

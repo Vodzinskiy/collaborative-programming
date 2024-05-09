@@ -73,3 +73,13 @@ mat-card {
 .mat-mdc-tab-body-content {
   display: flex;
 }
+
+.editor-container {
+  height: 100%!important;
+  overflow: hidden;
+}
+
+.mat-mdc-tab-header {
+  overflow: auto!important;
+  //width: 500px!important;
+}

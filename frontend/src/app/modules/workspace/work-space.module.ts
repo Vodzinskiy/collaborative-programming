@@ -4,8 +4,10 @@ import {WorkspaceMainComponent} from "./components/workspace-main/workspace-main
 import {MatButton, MatIconButton} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {TabsComponent} from "./components/tabs/tabs.component";
-import {MatTab, MatTabBody, MatTabGroup, MatTabLabel} from "@angular/material/tabs";
+import {MatTabsModule} from "@angular/material/tabs";
 import {DocumentContentComponent} from "./components/document-content/document-content.component";
+import {FormsModule} from "@angular/forms";
+import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 
 @NgModule({
   declarations: [
@@ -17,11 +19,10 @@ import {DocumentContentComponent} from "./components/document-content/document-c
     CommonModule,
     MatButton,
     MatIconModule,
-    MatTabGroup,
-    MatTab,
-    MatTabLabel,
     MatIconButton,
-    MatTabBody,
+    MatTabsModule,
+    FormsModule,
+    MonacoEditorModule
   ]
 })
 export class WorkSpaceModule {}

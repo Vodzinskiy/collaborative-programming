@@ -2,6 +2,7 @@ import {Component, HostListener, OnInit} from '@angular/core';
 import {ResizeService} from "../../services/resize.service";
 
 
+
 @Component({
   selector: 'app-workspace-main',
   templateUrl: './workspace-main.component.html',

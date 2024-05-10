@@ -1,4 +1,4 @@
-import {Component, HostListener, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, HostListener, Input, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from "rxjs";
 import {SocketService} from "../../services/socket.service";
 import {ResizeService} from "../../services/resize.service";
@@ -9,9 +9,9 @@ import {ResizeService} from "../../services/resize.service";
   styleUrl: './document-content.component.scss'
 })
 export class DocumentContentComponent implements OnInit, OnDestroy  {
-  protected content: string = '';
+  @Input() documentId!: string;
+  @Input() content: string = '';
   private previousDocumentLength: number = 0;
-  documentId: string = '1';
   private documentUpdatedSubscription!: Subscription;
   width: number = 0;
 

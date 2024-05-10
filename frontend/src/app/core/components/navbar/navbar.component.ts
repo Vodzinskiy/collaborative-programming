@@ -1,5 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from "../../../modules/auth/services/auth.service";
+import {MatDialog} from "@angular/material/dialog";
+import {FileService} from "../../../modules/workspace/services/file.service";
+import {DialogComponent} from "../../../shared/components/dialog/dialog.component";
 
 @Component({
   selector: 'app-navbar',
@@ -13,7 +16,7 @@ export class NavbarComponent implements OnInit{
 
   testName = ["test1", "test2", "test3"]
 
-  constructor(public authService: AuthService) {
+  constructor(public authService: AuthService, public dialog: MatDialog, public fileService: FileService) {
   }
 
   ngOnInit(): void {
@@ -31,5 +34,15 @@ export class NavbarComponent implements OnInit{
   signout() {
     this.authService.signout().subscribe()
     this.authService.setAuthStatus(false)
+  }
+
+  newFile() {
+    const dialogRef = this.dialog.open(DialogComponent, {
+      data: {title: "Новий файл", name: ""},
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      this.fileService.addFile(result, "")
+    });
   }
 }

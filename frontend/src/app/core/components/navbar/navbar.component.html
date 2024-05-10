@@ -27,7 +27,7 @@
 </mat-menu>
 
 <mat-menu #file="matMenu" class="mt-1">
-  <button mat-menu-item>Новий</button>
+  <button mat-menu-item (click)="newFile()">Новий</button>
   <mat-divider></mat-divider>
   <button mat-menu-item disabled>Зберегти</button>
   <button mat-menu-item disabled>Зберегти Все</button>

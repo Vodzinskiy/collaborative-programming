@@ -79,7 +79,7 @@ mat-card {
   overflow: hidden;
 }
 
-.mat-mdc-tab-header {
-  overflow: auto!important;
-  //width: 500px!important;
+.mat-tree-node {
+  z-index: -1!important;
 }
+

@@ -1,10 +1,11 @@
 <div class="d-flex flex-row" style="height: calc(100vh - 48px)">
-  <div *ngIf="leftVisible" class="d-flex flex-column p-2 bg-danger" [style.width.px]="leftWidth">
+  <div *ngIf="leftVisible" class="d-flex flex-column" [style.width.px]="leftWidth">
+    <app-file-tree></app-file-tree>
     <button class="button-close" (click)="toggleLeft()">
       <mat-icon>keyboard_arrow_left</mat-icon>
     </button>
   </div>
-  <div *ngIf="leftVisible" class="resizer" (mousedown)="startResizing()"></div>
+  <div *ngIf="leftVisible" class="resizer flex-shrink-0" (mousedown)="startResizing()"></div>
   <div class="d-flex flex-grow-1">
     <button *ngIf="!leftVisible" class="button-open" (click)="toggleLeft()">
       <mat-icon>keyboard_arrow_right</mat-icon>

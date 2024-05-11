@@ -10,6 +10,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @Id
@@ -22,16 +23,15 @@ public class User {
     @Column(unique = true)
     private String email;
 
+    @Column(unique = true)
+    private String providerId;
+
     private String password;
 
-    public User(String username, String email, String password) {
+    public User(String username, String email, String password, String providerId) {
         this.username = username;
         this.email = email;
         this.password = password;
-    }
-
-    public User(String username, String email) {
-        this.username = username;
-        this.email = email;
+        this.providerId = providerId;
     }
 }

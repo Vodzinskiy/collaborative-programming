@@ -10,4 +10,5 @@ public interface UserService {
     UserResponse createUser(UserRequest request);
     UserResponse editUser(UUID id, UserRequest request);
     User getUser(UUID id);
+    User getUserByEmail(String email);
 }

@@ -23,9 +23,12 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import vodzinskiy.backend.model.User;
+import vodzinskiy.backend.repository.UserRepository;
 import vodzinskiy.backend.service.impl.OAuth2UserService;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -34,9 +37,9 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @RequiredArgsConstructor
 @EnableRedisHttpSession
 public class SecurityConfig {
-
     private final UserDetailsService userDetailsService;
     private final OAuth2UserService oAuth2UserService;
+    private final UserRepository userRepository;
 
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -90,10 +93,16 @@ public class SecurityConfig {
                         .sessionFixation(SessionManagementConfigurer.SessionFixationConfigurer::newSession)
                 )
                 .oauth2Login(oauth2 -> oauth2
+                        .successHandler((request, response, authentication) -> {
+                            Optional<User> user = userRepository.findByProviderId(authentication.getName());
+                            if (user.isPresent()) {
+                                request.getSession().setAttribute("userID", user.get().getId());
+                                response.sendRedirect("http://localhost:4200");
+                            }
+                        })
                         .userInfoEndpoint(userInfo ->
                                 userInfo.userService(oAuth2UserService)
                         )
-                        .defaultSuccessUrl("http://localhost:4200", true)
                 );
         return http.build();
     }

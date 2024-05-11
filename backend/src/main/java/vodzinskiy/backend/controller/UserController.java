@@ -1,5 +1,8 @@
 package vodzinskiy.backend.controller;
 
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,15 +17,12 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
+@Slf4j
 public class UserController {
 
     private final UserRepository userRepository;
     private final UserService userService;
-
-    public UserController(UserRepository userRepository, UserService userService) {
-        this.userRepository = userRepository;
-        this.userService = userService;
-    }
 
     @PostMapping("/auth/signup")
     public ResponseEntity<UserResponse> registerUser(@RequestBody UserRequest request) {
@@ -30,23 +30,27 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
-    @GetMapping("/user/{id}")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable UUID id) {
-        User user = userService.getUser(id);
+    @GetMapping("/user")
+    public ResponseEntity<UserResponse> getUserById(HttpSession session) {
+        User user = userService.getUser(getUserId(session));
         return ResponseEntity.ok(new UserResponse(user.getId(), user.getUsername(), user.getEmail()));
     }
 
-    @DeleteMapping("/user/{id}")
-    public ResponseEntity<Void> deleteUserById(@PathVariable UUID id) {
-        userService.getUser(id);
-        userRepository.deleteById(id);
+    @DeleteMapping("/user")
+    public ResponseEntity<Void> deleteUserById(HttpSession session) {
+        userService.getUser(getUserId(session));
+        userRepository.deleteById(getUserId(session));
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("/user/{id}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable UUID id,
+    @PatchMapping("/user")
+    public ResponseEntity<UserResponse> updateUser(HttpSession session,
                                                    @RequestBody UserRequest userRequest) {
-        UserResponse userResponse = userService.editUser(id, userRequest);
+        UserResponse userResponse = userService.editUser(getUserId(session), userRequest);
         return ResponseEntity.ok(userResponse);
+    }
+
+    private UUID getUserId(HttpSession session) {
+        return UUID.fromString(session.getAttribute("userID").toString());
     }
 }

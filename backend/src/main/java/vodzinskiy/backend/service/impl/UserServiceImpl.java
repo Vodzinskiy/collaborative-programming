@@ -18,7 +18,6 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
@@ -28,7 +27,7 @@ public class UserServiceImpl implements UserService {
         throwIfUserExists(request.email(), "email");
         throwIfUserExists(request.username(), "username");
 
-        User user = new User(request.username(), request.email(), passwordEncoder.encode(request.password()));
+        User user = new User(request.username(), request.email(), passwordEncoder.encode(request.password()), null);
         userRepository.save(user);
         return new UserResponse(user.getId(), user.getUsername(), user.getEmail());
     }
@@ -38,6 +37,15 @@ public class UserServiceImpl implements UserService {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isEmpty()) {
             throw new NotFoundException(String.format("User with id \"%s\" not found", id));
+        }
+        return optionalUser.get();
+    }
+
+    @Override
+    public User getUserByEmail(String email) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if (optionalUser.isEmpty()) {
+            throw new NotFoundException(String.format("User with email \"%s\" not found", email));
         }
         return optionalUser.get();
     }

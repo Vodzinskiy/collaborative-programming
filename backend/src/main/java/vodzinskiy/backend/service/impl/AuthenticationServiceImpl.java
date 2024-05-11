@@ -12,6 +12,7 @@ import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Service;
 import vodzinskiy.backend.dto.LoginRequest;
 import vodzinskiy.backend.service.AuthenticationService;
+import vodzinskiy.backend.service.UserService;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +20,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final AuthenticationManager authenticationManager;
     private final SecurityContextRepository securityContextRepository;
+    private final UserService userService;
 
 
     @Override
@@ -29,5 +31,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         context.setAuthentication(authentication);
         SecurityContextHolder.setContext(context);
         securityContextRepository.saveContext(context, request, response);
+
+        request.getSession().setAttribute("userID", userService.getUserByEmail(loginRequest.email()).getId());
     }
 }

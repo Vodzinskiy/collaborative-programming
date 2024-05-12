@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {AuthService} from "../../services/auth.service";
 import {User} from "../../../../core/models/user.dto";
-import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-login',
@@ -15,7 +14,7 @@ export class LoginComponent {
     password: new FormControl('', Validators.required)
   });
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(private authService: AuthService) {}
 
   getControl(name: string): FormControl {
     return this.signinForm.get(name) as FormControl;
@@ -27,9 +26,7 @@ export class LoginComponent {
         email: this.signinForm.get('email')?.value || '',
         password: this.signinForm.get('password')?.value || ''
       };
-      this.authService.signin(user).subscribe(
-        () => this.router.navigate(['/'])
-      );
+      this.authService.signin(user)
     }
   }
 }

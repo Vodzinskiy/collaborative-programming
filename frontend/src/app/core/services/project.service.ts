@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import {HttpClient, HttpResponse} from "@angular/common/http";
+import {Injectable} from '@angular/core';
+import {HttpClient} from "@angular/common/http";
 import {env} from "../../../environments/environment";
 import {BehaviorSubject} from "rxjs";
 import {Project} from "../models/project.dto";
@@ -12,7 +12,8 @@ export class ProjectService {
   private projectSubject = new BehaviorSubject<Project | null>(null);
   public project$ = this.projectSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
   public createProject(name: string) {
     return this.http.post<Project>(`${this.apiUrl}project`, name, {observe: 'response', withCredentials: true})
@@ -35,11 +36,9 @@ export class ProjectService {
   public getProject(id: string) {
     this.http.get<Project>(`${this.apiUrl}project/${id}`, {observe: 'response', withCredentials: true})
       .subscribe({
-        next: (response: HttpResponse<Project>) => {
-          this.projectSubject.next(response.body);
-        },
-      error: (e) => console.error('Error loading data:', e)
-      }
-    )
+          next: (response) => this.projectSubject.next(response.body),
+          error: (e) => console.error(e)
+        }
+      )
   }
 }

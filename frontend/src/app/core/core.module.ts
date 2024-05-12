@@ -9,9 +9,16 @@ import {RouterLink} from "@angular/router";
 import {MatButton, MatMiniFabButton} from "@angular/material/button";
 import {ProjectMenuComponent} from "./components/navbar/project-menu/project-menu.component";
 import {ProjectDetailsComponent} from "./components/navbar/project-details/project-details.component";
+import {FileMenuComponent} from "./components/navbar/file-menu/file-menu.component";
+import {MatTooltip} from "@angular/material/tooltip";
+import {UserMenuComponent} from "./components/navbar/user-menu/user-menu.component";
 
 @NgModule({
-  declarations: [NavbarComponent, ProjectMenuComponent, ProjectDetailsComponent],
+  declarations: [NavbarComponent,
+    ProjectMenuComponent,
+    ProjectDetailsComponent,
+    FileMenuComponent,
+    UserMenuComponent],
   exports: [
     NavbarComponent
   ],
@@ -26,6 +33,7 @@ import {ProjectDetailsComponent} from "./components/navbar/project-details/proje
     RouterLink,
     MatButton,
     MatMiniFabButton,
+    MatTooltip,
   ]
 })
 export class CoreModule { }

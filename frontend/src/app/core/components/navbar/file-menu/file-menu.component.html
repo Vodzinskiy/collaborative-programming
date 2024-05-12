@@ -1,0 +1,9 @@
+<button mat-button [matTooltip]="hideMenu ? 'Спочатку створіть або доєднайтесь до проєкту' : ''"
+        [matMenuTriggerFor]="hideMenu ? null : file">Файл</button>
+
+<mat-menu #file="matMenu" class="mt-1">
+  <button mat-menu-item (click)="newFile()">Новий</button>
+  <mat-divider></mat-divider>
+  <button mat-menu-item disabled>Зберегти</button>
+  <button mat-menu-item disabled>Завантажити</button>
+</mat-menu>

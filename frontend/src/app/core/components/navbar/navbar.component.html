@@ -1,12 +1,12 @@
 <mat-toolbar color="primary" class="d-flex align-content-center justify-content-between">
   <div>
-    <button mat-button [matMenuTriggerFor]="file">Файл</button>
+    <app-file-menu></app-file-menu>
     <app-project-menu></app-project-menu>
   </div>
   <div *ngIf="!isLoading">
-    <div *ngIf="(authService.isAuthenticated$ | async); else notAuthenticated">
+    <div *ngIf="(authService.isAuthenticated$ | async); else notAuthenticated" class="d-flex align-items-center">
       <app-project-details></app-project-details>
-      <button mat-mini-fab color="warn" [matMenuTriggerFor]="profile">{{ firstLetter }}</button>
+      <app-user-menu></app-user-menu>
     </div>
     <ng-template #notAuthenticated>
       <button routerLink="/signup" class="mx-2" mat-stroked-button>Зареєструватись</button>
@@ -14,18 +14,3 @@
     </ng-template>
   </div>
 </mat-toolbar>
-
-<mat-menu #profile="matMenu" class="mt-1">
-  <span>LONG NAME</span>
-  <button mat-menu-item>Settings</button>
-  <button mat-menu-item disabled>Appearance</button>
-  <button mat-menu-item (click)="signout()">Sign out</button>
-</mat-menu>
-
-
-<mat-menu #file="matMenu" class="mt-1">
-  <button mat-menu-item (click)="newFile()">Новий</button>
-  <mat-divider></mat-divider>
-  <button mat-menu-item disabled>Зберегти</button>
-  <button mat-menu-item disabled>Завантажити</button>
-</mat-menu>

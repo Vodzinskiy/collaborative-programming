@@ -1,0 +1,10 @@
+<button mat-mini-fab color="warn" [matMenuTriggerFor]="profile">{{ profileLetter }}</button>
+
+<mat-menu #profile="matMenu" class="mt-1 d-flex">
+  <div class="d-flex justify-content-center m-1">
+    <span>{{ userName }}</span>
+  </div>
+  <button mat-menu-item>Settings</button>
+  <button mat-menu-item disabled>Appearance</button>
+  <button mat-menu-item (click)="signout()">Sign out</button>
+</mat-menu>

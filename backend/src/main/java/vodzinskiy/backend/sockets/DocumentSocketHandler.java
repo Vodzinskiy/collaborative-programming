@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import vodzinskiy.backend.dto.SocketChangeDto;
 
+import java.util.UUID;
+
 @Component
 @Slf4j
 public class DocumentSocketHandler {
@@ -30,7 +32,7 @@ public class DocumentSocketHandler {
     }
 
     @OnEvent("updateDocumentChar")
-    public void onUpdateDocument(SocketIOClient client, SocketChangeDto change, String documentId) {
+    public void onUpdateDocument(SocketIOClient client, SocketChangeDto change, UUID documentId) {
         /*StringBuffer document = documents.computeIfAbsent(documentId, k -> new StringBuffer());
         if (change.length() > 0) {
             document.insert(change.position(), change.content());

@@ -11,14 +11,12 @@ import vodzinskiy.backend.model.User;
 import vodzinskiy.backend.repository.UserRepository;
 
 import java.util.Optional;
-import java.util.logging.Logger;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class OAuth2UserService extends DefaultOAuth2UserService {
 
-    private final Logger logger = Logger.getLogger(this.getClass().getName());
     private final UserRepository userRepository;
 
     @Override
@@ -29,17 +27,15 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private void processOAuth2User(OAuth2User oAuth2User) {
-        logger.info("User attributes: " + oAuth2User.getAttributes());
-
         String username = Optional.ofNullable(oAuth2User.getAttributes().get("name"))
                 .map(Object::toString)
                 .orElseGet(() -> oAuth2User.getAttributes().get("login").toString());
         String email = Optional.ofNullable(oAuth2User.getAttributes().get("email"))
                 .map(Object::toString)
                 .orElse(null);
-        Optional<User> optionalUser = userRepository.findByEmail(email);
+        Optional<User> optionalUser = userRepository.findByProviderId(oAuth2User.getName());
         if (optionalUser.isEmpty()) {
-            User user = new User(username, email);
+            User user = new User(username, email, null, oAuth2User.getName());
             userRepository.save(user);
         }
     }

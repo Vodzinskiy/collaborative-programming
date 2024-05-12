@@ -1,5 +1,6 @@
 package vodzinskiy.backend.service.impl;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -62,5 +63,9 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsByEmailOrUsername(value, value)) {
             throw new AlreadyExistsException(String.format("User with %s \"%s\" already exists", fieldName, value));
         }
+    }
+
+    public UUID getIdFromSession(HttpSession session) {
+        return UUID.fromString(session.getAttribute("userID").toString());
     }
 }

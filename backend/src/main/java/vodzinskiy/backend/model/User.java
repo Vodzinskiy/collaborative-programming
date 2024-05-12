@@ -3,6 +3,7 @@ package vodzinskiy.backend.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -27,6 +28,9 @@ public class User {
     private String providerId;
 
     private String password;
+
+    @ManyToMany(mappedBy = "members")
+    private Set<Project> projects;
 
     public User(String username, String email, String password, String providerId) {
         this.username = username;

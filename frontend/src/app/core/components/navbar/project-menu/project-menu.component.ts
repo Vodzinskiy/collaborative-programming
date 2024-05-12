@@ -13,6 +13,7 @@ import {Router} from "@angular/router";
 })
 export class ProjectMenuComponent implements OnInit {
   protected owner: boolean = false;
+  private id: string = '';
 
   constructor(private projectService: ProjectService, public dialog: MatDialog, private router: Router) {
   }
@@ -22,6 +23,9 @@ export class ProjectMenuComponent implements OnInit {
         next: project => {
           if (project !== null) {
             this.owner = project.role === Role.OWNER
+            this.id = project.id
+          } else {
+            this.id = ''
           }
         }
       }
@@ -34,7 +38,8 @@ export class ProjectMenuComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.projectService.createProject(result).subscribe({
-          next: (project) => this.router.navigate(['/p', project.body?.id])})
+          next: (project) => this.router.navigate(['/p', project.body?.id])
+        })
       }
     });
   }
@@ -45,8 +50,29 @@ export class ProjectMenuComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.projectService.joinProject(result).subscribe({
-          next: (project) => this.router.navigate(['/p', project.body?.id])})
+          next: (project) => this.router.navigate(['/p', project.body?.id])
+        })
       }
     });
+  }
+
+  leaveProject() {
+    this.projectService.leaveProject(this.id).subscribe({
+      next: () => {
+        void this.router.navigate(['/'])
+      }
+    })
+  }
+
+  deleteProject() {
+    if (this.owner) {
+      this.projectService.deleteProject(this.id).subscribe({
+          next: () => {
+            void this.router.navigate(['/'])
+            this.owner = false
+          }
+        }
+      )
+    }
   }
 }

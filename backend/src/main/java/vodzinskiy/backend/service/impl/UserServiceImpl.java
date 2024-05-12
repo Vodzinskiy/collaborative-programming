@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import vodzinskiy.backend.dto.UserRequest;
 import vodzinskiy.backend.dto.UserResponse;
 import vodzinskiy.backend.exception.AlreadyExistsException;
+import vodzinskiy.backend.exception.ForbiddenException;
 import vodzinskiy.backend.exception.NotFoundException;
 import vodzinskiy.backend.mapper.UserMapper;
 import vodzinskiy.backend.model.User;
@@ -66,6 +67,10 @@ public class UserServiceImpl implements UserService {
     }
 
     public UUID getIdFromSession(HttpSession session) {
-        return UUID.fromString(session.getAttribute("userID").toString());
+        try {
+            return UUID.fromString(session.getAttribute("userID").toString());
+        } catch (Exception e) {
+            throw new ForbiddenException("You must be authenticated for this action");
+        }
     }
 }

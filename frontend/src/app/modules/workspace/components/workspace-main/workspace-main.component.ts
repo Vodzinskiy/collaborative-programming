@@ -4,7 +4,6 @@ import {ActivatedRoute} from "@angular/router";
 import {ProjectService} from "../../../../core/services/project.service";
 
 
-
 @Component({
   selector: 'app-workspace-main',
   templateUrl: './workspace-main.component.html',
@@ -29,11 +28,6 @@ export class WorkspaceMainComponent implements OnInit {
     if (id) {
       this.projectService.getProject(id)
     }
-
-    /*this.route.params.subscribe(params => {
-      const id = params['id'] || null;
-      this.projectService.setProjectId(id);
-    });*/
   }
 
   @HostListener('document:mousemove', ['$event'])

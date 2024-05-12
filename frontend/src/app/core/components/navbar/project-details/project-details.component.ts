@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {ProjectService} from "../../../services/project.service";
 
 @Component({
   selector: 'app-project-details',
@@ -6,9 +7,24 @@ import {Component, OnInit} from '@angular/core';
   styleUrl: './project-details.component.scss'
 })
 export class ProjectDetailsComponent implements OnInit {
-  testName = ["test1", "test2", "test3"]
-  projectName: string = "projectName";
+  members: string[] = []
+  projectName: string = "";
+  protected id: string = '';
+
+  constructor(protected projectService: ProjectService) {}
 
   ngOnInit(): void {
+    this.projectService.project$.subscribe({
+        next: project => {
+          this.id = project?.id ?? '';
+          this.projectName = project?.name ?? '';
+          this.members = project?.members ? [project.owner, ...project.members] : [];
+        }
+      }
+    )
+  }
+
+  copyId() {
+    navigator.clipboard.writeText(this.id).then()
   }
 }

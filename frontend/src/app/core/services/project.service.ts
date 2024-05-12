@@ -9,8 +9,6 @@ import {Project} from "../models/project.dto";
 })
 export class ProjectService {
   private apiUrl = env.API_URL;
-  /*private projectIdSource = new BehaviorSubject<string | null>(null);
-  projectId$ = this.projectIdSource.asObservable();*/
   private projectSubject = new BehaviorSubject<Project | null>(null);
   public project$ = this.projectSubject.asObservable();
 
@@ -24,6 +22,16 @@ export class ProjectService {
     return this.http.post<Project>(`${this.apiUrl}project/join/${id}`, {}, {observe: 'response', withCredentials: true})
   }
 
+  public leaveProject(id: string) {
+    this.projectSubject.next(null);
+    return this.http.post(`${this.apiUrl}project/leave/${id}`, {}, {observe: 'response', withCredentials: true})
+  }
+
+  public deleteProject(id: string) {
+    this.projectSubject.next(null);
+    return this.http.delete(`${this.apiUrl}project/${id}`, {observe: 'response', withCredentials: true})
+  }
+
   public getProject(id: string) {
     this.http.get<Project>(`${this.apiUrl}project/${id}`, {observe: 'response', withCredentials: true})
       .subscribe({
@@ -34,8 +42,4 @@ export class ProjectService {
       }
     )
   }
-
-  /*setProjectId(id: string | null) {
-    this.projectIdSource.next(id);
-  }*/
 }

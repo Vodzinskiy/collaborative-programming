@@ -40,7 +40,7 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.getProjectById(id, userService.getIdFromSession(session)));
     }
 
-    @PostMapping("/{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteProject(@PathVariable UUID id, HttpSession session) {
         projectService.deleteProject(id, userService.getIdFromSession(session));

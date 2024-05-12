@@ -1,10 +1,8 @@
-import {User} from "./user.dto";
-
 export interface Project {
   id: string;
-  name: number;
-  owner?: User;
-  members?: string[];
+  name: string;
+  owner: string;
+  members: string[];
   role: Role;
 }
 

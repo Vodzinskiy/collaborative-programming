@@ -3,6 +3,7 @@ package vodzinskiy.backend.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import vodzinskiy.backend.dto.ProjectResponse;
+import vodzinskiy.backend.dto.Role;
 import vodzinskiy.backend.exception.ForbiddenException;
 import vodzinskiy.backend.exception.NotFoundException;
 import vodzinskiy.backend.model.Project;
@@ -29,7 +30,7 @@ public class ProjectServiceImpl implements ProjectService {
         User owner = userService.getUser(ownerId);
         Project project = new Project(name, owner);
         projectRepository.save(project);
-        return new ProjectResponse(project.getId(), project.getName(), owner.getUsername(), new HashSet<>());
+        return new ProjectResponse(project.getId(), project.getName(), owner.getUsername(), new HashSet<>(), Role.OWNER);
     }
 
     @Override
@@ -42,19 +43,9 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectResponse getProjectById(UUID id) {
-        Project project = getProject(id);
-        String ownerName = project.getOwner().getUsername();
-        Set<String> memberNames = project.getMembers().stream()
-                .map(User::getUsername)
-                .collect(Collectors.toSet());
-
-        return new ProjectResponse(
-                project.getId(),
-                project.getName(),
-                ownerName,
-                memberNames
-        );
+    public ProjectResponse getProjectById(UUID projectId, UUID userId) {
+        Project project = getProject(projectId);
+        return projectToProjectResponse(project, userId);
     }
 
     @Override
@@ -71,10 +62,34 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public void joinProject(UUID projectId, UUID userId) {
+    public ProjectResponse joinProject(UUID projectId, UUID userId) {
         Project project = getProject(projectId);
         User user = userService.getUser(userId);
         project.addMember(user);
         projectRepository.save(project);
+        return projectToProjectResponse(project, userId);
+    }
+
+    @Override
+    public void leaveProject(UUID projectId, UUID userId) {
+        Project project = getProject(projectId);
+        project.removeMember(userId);
+        projectRepository.save(project);
+    }
+
+    private ProjectResponse projectToProjectResponse(Project project, UUID userId ) {
+        Role role = Role.MEMBER;
+        if (userId.equals(project.getOwner().getId())) {
+            role = Role.OWNER;
+        }
+        Set<String> memberNames = project.getMembers().stream()
+                .map(User::getUsername)
+                .collect(Collectors.toSet());
+        return new ProjectResponse(project.getId(),
+                project.getName(),
+                project.getOwner().getUsername(),
+                memberNames,
+                role
+        );
     }
 }

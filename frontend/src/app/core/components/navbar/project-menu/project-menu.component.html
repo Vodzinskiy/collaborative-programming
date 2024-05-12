@@ -1,0 +1,9 @@
+<button mat-button [matMenuTriggerFor]="project">Поєкт</button>
+
+<mat-menu #project="matMenu" class="mt-1">
+  <button mat-menu-item (click)="createProject()">Створити</button>
+  <button mat-menu-item (click)="joinProject()">Доєднатись</button>
+  <button mat-menu-item>Від'єднатись</button>
+  <button *ngIf="owner" mat-menu-item>Видалити</button>
+</mat-menu>
+

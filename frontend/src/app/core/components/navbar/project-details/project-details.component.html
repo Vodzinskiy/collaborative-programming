@@ -1,0 +1,5 @@
+<button mat-stroked-button color="accent" class="mx-4" [matMenuTriggerFor]="projectMember">{{projectName}}</button>
+
+<mat-menu #projectMember="matMenu" class="mt-1">
+  <span mat-menu-item *ngFor="let name of testName" [textContent]="name"></span>
+</mat-menu>

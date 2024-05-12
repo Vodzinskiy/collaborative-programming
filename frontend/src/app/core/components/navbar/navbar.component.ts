@@ -3,6 +3,7 @@ import {AuthService} from "../../../modules/auth/services/auth.service";
 import {MatDialog} from "@angular/material/dialog";
 import {FileService} from "../../../modules/workspace/services/file.service";
 import {DialogComponent} from "../../../shared/components/dialog/dialog.component";
+import {DialogData} from "../../models/dialog-data.dto";
 
 @Component({
   selector: 'app-navbar',
@@ -11,10 +12,7 @@ import {DialogComponent} from "../../../shared/components/dialog/dialog.componen
 })
 export class NavbarComponent implements OnInit{
   firstLetter: string = "A";
-  projectName: string = "projectName";
   isLoading = true;
-
-  testName = ["test1", "test2", "test3"]
 
   constructor(public authService: AuthService, public dialog: MatDialog, public fileService: FileService) {
   }
@@ -37,12 +35,12 @@ export class NavbarComponent implements OnInit{
   }
 
   newFile() {
-    const dialogRef = this.dialog.open(DialogComponent, {
-      data: {title: "Новий файл", name: ""},
-    });
-
+    const data: DialogData = {buttonTitle: "Створити", placeholder: "Назва", title: "Новий Файл"}
+    const dialogRef = this.dialog.open(DialogComponent, {data});
     dialogRef.afterClosed().subscribe(result => {
-      this.fileService.addFile(result, "")
+      if (result)  {
+        this.fileService.addFile(result, "")
+      }
     });
   }
 }

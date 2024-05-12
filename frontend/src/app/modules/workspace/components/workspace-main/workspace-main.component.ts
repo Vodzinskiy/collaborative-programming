@@ -1,5 +1,7 @@
 import {Component, HostListener, OnInit} from '@angular/core';
 import {ResizeService} from "../../services/resize.service";
+import {ActivatedRoute} from "@angular/router";
+import {ProjectService} from "../../../../core/services/project.service";
 
 
 
@@ -15,13 +17,23 @@ export class WorkspaceMainComponent implements OnInit {
   minWidth = 0;
   maxWidth = 0;
 
-  constructor(private resizeService: ResizeService) {
+  constructor(private resizeService: ResizeService, private route: ActivatedRoute, private projectService: ProjectService) {
   }
 
   ngOnInit(): void {
     this.minWidth = window.innerWidth * 0.05;
     this.maxWidth = window.innerWidth * 0.95;
     this.leftWidth = Math.ceil(window.innerWidth * 0.2);
+
+    let id: string = this.route.snapshot.params['id']
+    if (id) {
+      this.projectService.getProject(id)
+    }
+
+    /*this.route.params.subscribe(params => {
+      const id = params['id'] || null;
+      this.projectService.setProjectId(id);
+    });*/
   }
 
   @HostListener('document:mousemove', ['$event'])

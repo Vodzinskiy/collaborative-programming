@@ -5,18 +5,12 @@ import {AuthModule} from "./modules/auth/auth.module";
 import {AppRoutingModule} from "./app-routing.module";
 import {BrowserModule} from "@angular/platform-browser";
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import {NavbarComponent} from "./core/components/navbar/navbar.component";
-import {MatToolbar} from "@angular/material/toolbar";
-import {MatIcon} from "@angular/material/icon";
-import {MatAnchor, MatButton, MatFabButton, MatIconButton, MatMiniFabButton} from "@angular/material/button";
-import {MatMenu, MatMenuItem, MatMenuTrigger} from "@angular/material/menu";
-import {MatDivider} from "@angular/material/divider";
 import {WorkSpaceModule} from "./modules/workspace/work-space.module";
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
+import {CoreModule} from "./core/core.module";
 
 @NgModule({
-  declarations: [AppComponent,
-    NavbarComponent],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     CommonModule,
@@ -24,17 +18,7 @@ import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
     AuthModule,
     WorkSpaceModule,
     AppRoutingModule,
-    MatToolbar,
-    MatIcon,
-    MatAnchor,
-    MatIconButton,
-    MatButton,
-    MatMenuTrigger,
-    MatMenu,
-    MatMenuItem,
-    MatFabButton,
-    MatMiniFabButton,
-    MatDivider
+    CoreModule
   ],
   providers: [
     provideAnimationsAsync()

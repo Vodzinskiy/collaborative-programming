@@ -43,4 +43,8 @@ public class Project {
     public void addMember(User user) {
         this.members.add(user);
     }
+
+    public void removeMember(UUID userId) {
+        members.removeIf(user -> user.getId().equals(userId));
+    }
 }

@@ -7,6 +7,6 @@ import {env} from "../../../../environments/environment";
 })
 export class SocialLoginComponent {
   socialLogin(provider: string) {
-    window.location.href = env.API_URL + 'oauth2/authorization/' + provider;
+    window.location.href = env.API_URL.slice(0, -4) + 'oauth2/authorization/' + provider;
   }
 }

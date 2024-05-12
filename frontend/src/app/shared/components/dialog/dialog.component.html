@@ -1,11 +1,11 @@
 <h2 mat-dialog-title>{{data.title}}</h2>
 <mat-dialog-content>
   <mat-form-field>
-    <mat-label>Ім'я</mat-label>
+    <mat-label>{{ data.placeholder }}</mat-label>
     <input matInput [(ngModel)]="data.name">
   </mat-form-field>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-button (click)="onClose()">Скасувати</button>
-  <button mat-button [mat-dialog-close]="data.name">Створити</button>
+  <button mat-button [mat-dialog-close]="data.name">{{ data.buttonTitle }}</button>
 </mat-dialog-actions>

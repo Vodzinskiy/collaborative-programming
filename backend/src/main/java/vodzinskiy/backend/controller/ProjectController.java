@@ -24,15 +24,20 @@ public class ProjectController {
                 projectService.createProject(userService.getIdFromSession(session), name));
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("/join/{id}")
+    public ResponseEntity<ProjectResponse> joinProject(@PathVariable UUID id, HttpSession session) {
+        return ResponseEntity.ok(projectService.joinProject(id, userService.getIdFromSession(session)));
+    }
+
+    @PostMapping("/leave/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void joinProject(@PathVariable UUID id, HttpSession session) {
-        projectService.joinProject(id, userService.getIdFromSession(session));
+    public void leaveProject(@PathVariable UUID id, HttpSession session) {
+        projectService.leaveProject(id, userService.getIdFromSession(session));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProjectResponse> getProject(@PathVariable UUID id) {
-        return ResponseEntity.ok(projectService.getProjectById(id));
+    public ResponseEntity<ProjectResponse> getProject(@PathVariable UUID id, HttpSession session) {
+        return ResponseEntity.ok(projectService.getProjectById(id, userService.getIdFromSession(session)));
     }
 
     @PostMapping("/{id}")

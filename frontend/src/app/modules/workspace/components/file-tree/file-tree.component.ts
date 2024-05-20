@@ -26,9 +26,9 @@ export class FileTreeComponent implements OnInit {
   handleContextMenu(action: ContextMenuAction) {
     switch (action[0]) {
       case 'new_directory':
-        return this.fileService.addFile('directory', action[1], this.tree);
+        return this.fileService.addFile('directory', action[1], this.tree, "");
       case 'new_file':
-        return this.fileService.addFile('file', action[1], this.tree);
+        return this.fileService.addFile('file', action[1], this.tree, "");
       case 'delete_file':
         return this.remove(action[1], this.tree);
       case 'rename_file':

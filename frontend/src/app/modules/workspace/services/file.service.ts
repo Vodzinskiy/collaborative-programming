@@ -17,6 +17,9 @@ export class FileService {
   private files: any[] = []
   private openFiles: FileModel[] = []
 
+  private tabIndexSubject = new BehaviorSubject<number | null>(null);
+  public tabIndexObservable$ = this.tabIndexSubject.asObservable();
+
   private filesSubject = new BehaviorSubject<FileModel[]>(this.files);
   filesObservable$: Observable<FileModel[]> = this.filesSubject.asObservable();
 
@@ -26,51 +29,51 @@ export class FileService {
   constructor(private http: HttpClient, public dialog: MatDialog) {
   }
 
-  addFile(type: 'directory' | 'file', path: string, localTree: MonacoTreeElement[]) {
-    const spited = path.split('/');
-    const data: DialogData = {
-      buttonTitle: "Створити",
-      placeholder: "Назва",
-      title: type === 'directory' ? "Нова директорія" : "Новий Файл"
-    }
+  addFile(type: 'directory' | 'file', path: string, localTree: MonacoTreeElement[], fullPath: string) {
+    const title = type === 'directory' ? "Нова директорія" : "Новий файл";
+    const data: DialogData = {buttonTitle: "Створити", placeholder: "Назва", title: title}
     const dialogRef = this.dialog.open(DialogComponent, {data});
     dialogRef.afterClosed().subscribe(name => {
       if (name) {
-        if (spited.length === 1) {
-          if (path === '') {
-            localTree.push(this.file(name, type));
-          } else {
-            const file = localTree.find((el) => el.name == path);
-            if (!file) return;
-            else if (file.content === undefined) {
-              localTree.push(this.file(name, type));
-            } else {
-              file.content.push(this.file(name, type));
-            }
-          }
-        } else {
-          const file = localTree.find((el) => el.name == spited[0]);
-          if (!file || !file.content) return;
-          this.addFile(type, spited.slice(1).join('/'), file?.content);
-        }
+        this.createFile(type, path, localTree, fullPath, name)
       }
     });
   }
 
-  private file(name: string, type: 'directory' | 'file') {
-    let data
-    if (type === 'file') {
-      data = new FileModel(name, "")
-      this.openFile(data)
-    } else {
-      data = {
-        name: name,
-        content: [],
+  private createFile(type: 'directory' | 'file', path: string, localTree: MonacoTreeElement[], fullPath: string, name: string) {
+    const spited = path.split('/');
+    if (spited.length === 1) {
+      if (path === '') {
+        const newFullPath = `${fullPath}/${name}`;
+        localTree.push(this.file(name, type, newFullPath));
+      } else {
+        const file = localTree.find((el) => el.name == path);
+        if (!file) return;
+        else if (file.content === undefined) {
+          const newFullPath = `${fullPath}/${name}`;
+          localTree.push(this.file(name, type, newFullPath));
+        } else {
+          const newFullPath = `${fullPath}/${path}/${name}`;
+          file.content.push(this.file(name, type, newFullPath));
+        }
       }
+    } else {
+      const file = localTree.find((el) => el.name == spited[0]);
+      if (!file || !file.content) return;
+      const newFullPath = `${fullPath}/${spited[0]}`;
+      this.createFile(type, spited.slice(1).join('/'), file?.content, newFullPath, name);
     }
-    return data
   }
 
+  private file(name: string, type: 'directory' | 'file', fullPath: string) {
+    if (type === 'file') {
+      let data = new FileModel(name, "", fullPath.slice(1))
+      this.openFile(data)
+      return data
+    } else {
+      return {name: name, content: []}
+    }
+  }
 
   saveFile(file: FileModel) {
     this.http.put(`${this.apiUrl}project/1/`, file, {observe: 'response', withCredentials: true}).subscribe()
@@ -95,6 +98,13 @@ export class FileService {
     if (index !== -1) {
       this.openFiles.splice(index, 1);
       this.openFilesSubject.next(this.openFiles);
+    }
+  }
+
+  public switchToTab(name: string) {
+    const tabIndex = this.openFiles.findIndex(file => file.path === name);
+    if (tabIndex !== -1) {
+      this.tabIndexSubject.next(tabIndex);
     }
   }
 }

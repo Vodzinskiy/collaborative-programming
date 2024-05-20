@@ -2,7 +2,8 @@
         [matMenuTriggerFor]="hideMenu ? null : file">Файл</button>
 
 <mat-menu #file="matMenu" class="mt-1">
-  <button mat-menu-item (click)="newFile()">Новий</button>
+  <button mat-menu-item (click)="newFile()">Новий Файл</button>
+  <button mat-menu-item (click)="newDirectory()">Нова Директорія</button>
   <mat-divider></mat-divider>
   <button mat-menu-item disabled>Зберегти</button>
   <button mat-menu-item disabled>Завантажити</button>

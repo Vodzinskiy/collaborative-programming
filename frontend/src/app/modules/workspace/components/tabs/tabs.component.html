@@ -1,5 +1,5 @@
 <mat-tab-group mat-stretch-tabs="false" class="d-flex" [style.width.px]="width" #tabGroup>
-  <mat-tab *ngFor="let file of fileService.openFilesObservable$ | async; let index = index">
+  <mat-tab *ngFor="let file of tabs; let index = index">
     <ng-template mat-tab-label>
       <span class="user-select-none">{{file.name}}</span>
       <button style="pointer-events: auto;" (click)="closeTab(index);$event.stopPropagation()" mat-icon-button><mat-icon>close</mat-icon></button>

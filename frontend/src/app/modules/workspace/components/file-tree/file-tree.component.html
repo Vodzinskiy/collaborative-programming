@@ -1,6 +1,6 @@
 <monaco-tree class="d-flex flex-grow-1"
   [theme]="dark ? 'vs-dark' : 'vs-light'"
   [tree]="tree"
-  (clickFile)="currentFile = $event"
+  (clickFile)="fileService.switchToTab($event)"
   (clickContextMenu)="handleContextMenu($event)"
 ></monaco-tree>

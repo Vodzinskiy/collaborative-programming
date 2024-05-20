@@ -79,7 +79,11 @@ mat-card {
   overflow: hidden;
 }
 
-.mat-tree-node {
+/*.mat-tree-node {
   z-index: -1!important;
-}
+}*/
 
+.monaco-tree {
+  height: 100%!important;
+  width: 100%!important;
+}

@@ -10,6 +10,7 @@ import {FormsModule} from "@angular/forms";
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import {FileTreeComponent} from "./components/file-tree/file-tree.component";
 import {MatMenuModule} from "@angular/material/menu";
+import {NgxMonacoTreeModule} from "ngx-monaco-tree";
 
 
 @NgModule({
@@ -19,15 +20,16 @@ import {MatMenuModule} from "@angular/material/menu";
     DocumentContentComponent,
     FileTreeComponent,
   ],
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatIconModule,
-    MatIconButton,
-    MatTabsModule,
-    FormsModule,
-    MatMenuModule,
-    MonacoEditorModule,
-  ]
+    imports: [
+        CommonModule,
+        MatButtonModule,
+        MatIconModule,
+        MatIconButton,
+        MatTabsModule,
+        FormsModule,
+        MatMenuModule,
+        MonacoEditorModule,
+        NgxMonacoTreeModule,
+    ]
 })
 export class WorkSpaceModule {}

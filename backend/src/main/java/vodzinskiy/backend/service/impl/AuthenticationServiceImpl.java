@@ -11,6 +11,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Service;
 import vodzinskiy.backend.dto.LoginRequest;
+import vodzinskiy.backend.dto.UserResponse;
+import vodzinskiy.backend.model.User;
 import vodzinskiy.backend.service.AuthenticationService;
 import vodzinskiy.backend.service.UserService;
 
@@ -24,14 +26,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 
     @Override
-    public void signin(LoginRequest loginRequest, HttpServletRequest request, HttpServletResponse response) {
+    public UserResponse signin(LoginRequest loginRequest, HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password()));
         SecurityContext context = SecurityContextHolder.getContext();
         context.setAuthentication(authentication);
         SecurityContextHolder.setContext(context);
         securityContextRepository.saveContext(context, request, response);
-
-        request.getSession().setAttribute("userID", userService.getUserByEmail(loginRequest.email()).getId());
+        User user = userService.getUserByEmail(loginRequest.email());
+        request.getSession().setAttribute("userID", user.getId());
+        return new UserResponse(user.getId(), user.getUsername(), user.getEmail());
     }
 }

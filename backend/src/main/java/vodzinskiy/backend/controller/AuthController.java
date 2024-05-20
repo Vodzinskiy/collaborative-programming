@@ -9,6 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import vodzinskiy.backend.dto.LoginRequest;
+import vodzinskiy.backend.dto.UserResponse;
 import vodzinskiy.backend.service.AuthenticationService;
 
 
@@ -20,11 +21,10 @@ public class AuthController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/signin")
-    public ResponseEntity<Void> signIn(@RequestBody LoginRequest loginRequest,
-                                       HttpServletRequest request,
-                                       HttpServletResponse response) {
-        authenticationService.signin(loginRequest, request, response);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<UserResponse> signIn(@RequestBody LoginRequest loginRequest,
+                                               HttpServletRequest request,
+                                               HttpServletResponse response) {;
+        return ResponseEntity.ok(authenticationService.signin(loginRequest, request, response));
     }
 
     @GetMapping("/session")

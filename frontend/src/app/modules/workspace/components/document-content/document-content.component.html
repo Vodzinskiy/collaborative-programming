@@ -1,2 +1,2 @@
-<ngx-monaco-editor class="d-flex flex-grow-1" [options]="editorOptions" [(ngModel)]="content"
-                   [style.width.px]="width"></ngx-monaco-editor>
+<ngx-monaco-editor class="d-flex flex-grow-1" [options]="editorOptions" [(ngModel)]="file.data"
+                   [style.width.px]="width" (input)="onDocumentChange($event)"></ngx-monaco-editor>

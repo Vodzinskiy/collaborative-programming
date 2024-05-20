@@ -1,7 +1,8 @@
-import {Component, HostListener, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, HostListener, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {ResizeService} from "../../services/resize.service";
-import {MatTabGroup} from "@angular/material/tabs";
+import {MatTab, MatTabGroup} from "@angular/material/tabs";
 import {FileService} from "../../services/file.service";
+import {DocumentContentComponent} from "../document-content/document-content.component";
 
 
 @Component({
@@ -9,9 +10,11 @@ import {FileService} from "../../services/file.service";
   templateUrl: './tabs.component.html',
   styleUrl: './tabs.component.scss'
 })
-export class TabsComponent implements OnInit {
-  width: number = 0;
+export class TabsComponent implements OnInit, AfterViewInit {
   @ViewChild('tabGroup') tabGroup!: MatTabGroup;
+  @ViewChildren(MatTab) tabs!: QueryList<MatTab>;
+  @ViewChildren(DocumentContentComponent) contentTabs!: QueryList<DocumentContentComponent>;
+  width: number = 0;
 
   constructor(protected resizeService: ResizeService, protected fileService: FileService) {}
 
@@ -20,14 +23,19 @@ export class TabsComponent implements OnInit {
     this.resize()
   }
 
-  tabs = [
-    { title: 'Tab 1', content: 'Content for Tab 1' },
-    { title: 'Tab 2', content: 'Content for Tab 2' },
-    { title: 'Tab 3', content: 'Content for Tab 3' },
-  ];
+  ngAfterViewInit() {
+    const activeTab = this.tabs.find(tab => tab.isActive);
+    if (activeTab) {
+      const activeIndex = this.tabs.toArray().indexOf(activeTab);
+      const activeContentTab = this.contentTabs.toArray()[activeIndex];
+      console.log(1453)
+      activeContentTab.saveFile();
+    }
+  }
+
 
   closeTab(index: number) {
-    this.tabs.splice(index, 1);
+    this.fileService.closeFile(index)
   }
 
   resize()  {

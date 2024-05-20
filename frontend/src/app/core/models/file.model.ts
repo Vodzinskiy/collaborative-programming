@@ -2,12 +2,13 @@ import {UUID} from "crypto";
 
 export class FileModel {
   id: UUID;
-  title: string;
-  content: string;
+  name: string;
+  data: string;
+  content = undefined
 
-  constructor(title: string, content: string) {
+  constructor(name: string, data: string) {
     this.id = crypto.randomUUID();
-    this.title = title;
-    this.content = content
+    this.name = name;
+    this.data = data
   }
 }

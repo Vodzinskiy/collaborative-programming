@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ProjectService} from "../../../services/project.service";
+import {SocketService} from "../../../services/socket.service";
 
 @Component({
   selector: 'app-project-details',
@@ -11,7 +12,7 @@ export class ProjectDetailsComponent implements OnInit {
   projectName: string = "";
   protected id: string = '';
 
-  constructor(protected projectService: ProjectService) {}
+  constructor(protected projectService: ProjectService, private socketService: SocketService) {}
 
   ngOnInit(): void {
     this.projectService.project$.subscribe({
@@ -22,6 +23,9 @@ export class ProjectDetailsComponent implements OnInit {
         }
       }
     )
+    this.socketService.memberListUpdate().subscribe({
+      next: m => this.members = m
+    })
   }
 
   copyId() {

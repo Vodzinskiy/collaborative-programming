@@ -5,6 +5,7 @@ import {MatDialog} from "@angular/material/dialog";
 import {DialogData} from "../../../models/dialog-data.dto";
 import {Role} from "../../../models/project.dto";
 import {Router} from "@angular/router";
+import {SocketService} from "../../../services/socket.service";
 
 @Component({
   selector: 'app-project-menu',
@@ -15,7 +16,7 @@ export class ProjectMenuComponent implements OnInit {
   protected owner: boolean = false;
   private id: string = '';
 
-  constructor(private projectService: ProjectService, public dialog: MatDialog, private router: Router) {
+  constructor(private projectService: ProjectService, public dialog: MatDialog, private router: Router, private socket: SocketService) {
   }
 
   ngOnInit(): void {
@@ -38,7 +39,10 @@ export class ProjectMenuComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.projectService.createProject(result).subscribe({
-          next: (project) => this.router.navigate(['/p', project.body?.id])
+          next: (project) => {
+            this.socket.connectToSocket(project.body?.id)
+            void this.router.navigate(['/p', project.body?.id])
+          }
         })
       }
     });
@@ -50,7 +54,10 @@ export class ProjectMenuComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.projectService.joinProject(result).subscribe({
-          next: (project) => this.router.navigate(['/p', project.body?.id])
+          next: (project) => {
+            this.socket.connectToSocket(project.body?.id)
+            void this.router.navigate(['/p', project.body?.id])
+          }
         })
       }
     });
@@ -59,6 +66,7 @@ export class ProjectMenuComponent implements OnInit {
   leaveProject() {
     this.projectService.leaveProject(this.id).subscribe({
       next: () => {
+        this.socket.disconnectFromSocket()
         void this.router.navigate(['/'])
       }
     })

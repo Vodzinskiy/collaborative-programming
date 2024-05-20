@@ -26,13 +26,13 @@ public class UserController {
     }
 
     @GetMapping("/user")
-    public ResponseEntity<UserResponse> getUserById(HttpSession session) {
+    public ResponseEntity<UserResponse> getUser(HttpSession session) {
         User user = userService.getUser(userService.getIdFromSession(session));
         return ResponseEntity.ok(new UserResponse(user.getId(), user.getUsername(), user.getEmail()));
     }
 
     @DeleteMapping("/user")
-    public ResponseEntity<Void> deleteUserById(HttpSession session) {
+    public ResponseEntity<Void> deleteUser(HttpSession session) {
         userService.getUser(userService.getIdFromSession(session));
         userRepository.deleteById(userService.getIdFromSession(session));
         return ResponseEntity.ok().build();

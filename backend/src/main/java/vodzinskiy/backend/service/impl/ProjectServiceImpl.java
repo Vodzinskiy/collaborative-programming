@@ -1,6 +1,8 @@
 package vodzinskiy.backend.service.impl;
 
+import com.corundumstudio.socketio.SocketIOServer;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import vodzinskiy.backend.dto.ProjectResponse;
 import vodzinskiy.backend.dto.Role;
@@ -13,18 +15,17 @@ import vodzinskiy.backend.repository.ProjectRepository;
 import vodzinskiy.backend.service.ProjectService;
 import vodzinskiy.backend.service.UserService;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
     private final UserService userService;
+    private final SocketIOServer server;
 
     @Override
     public ProjectResponse createProject(UUID ownerId, String name) {
@@ -71,6 +72,7 @@ public class ProjectServiceImpl implements ProjectService {
         } else {
             project.addMember(user);
             projectRepository.save(project);
+            updateMembersList(project);
             return projectToProjectResponse(project, userId);
         }
     }
@@ -80,6 +82,15 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = getProject(projectId);
         project.removeMember(userId);
         projectRepository.save(project);
+        updateMembersList(project);
+    }
+
+    private void updateMembersList(Project project) {
+        List<String> memberNames = project.getMembers().stream()
+                .map(User::getUsername)
+                .collect(Collectors.toCollection(ArrayList::new));
+        memberNames.addFirst(project.getOwner().getUsername());
+        server.getRoomOperations(project.getId().toString()).sendEvent("projectUserListUpdated", memberNames);
     }
 
     private ProjectResponse projectToProjectResponse(Project project, UUID userId ) {

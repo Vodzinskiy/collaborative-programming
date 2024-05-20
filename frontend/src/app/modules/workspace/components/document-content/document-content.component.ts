@@ -1,7 +1,8 @@
 import {Component, HostListener, Input, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from "rxjs";
-import {SocketService} from "../../services/socket.service";
+import {SocketService} from "../../../../core/services/socket.service";
 import {ResizeService} from "../../services/resize.service";
+import {FileModel} from "../../../../core/models/file.model";
 
 @Component({
   selector: 'app-document-content',
@@ -9,14 +10,12 @@ import {ResizeService} from "../../services/resize.service";
   styleUrl: './document-content.component.scss'
 })
 export class DocumentContentComponent implements OnInit, OnDestroy  {
-  @Input() documentId!: string;
-  @Input() content: string = '';
+  @Input() file!: FileModel
   private previousDocumentLength: number = 0;
   private documentUpdatedSubscription!: Subscription;
   width: number = 0;
 
-  editorOptions = {theme: 'vs-dark', language: 'typescript',
-    automaticLayout: true};
+  editorOptions = {theme: 'vs-dark', language: 'typescript', automaticLayout: true};
 
   constructor(private socketService: SocketService, protected resizeService: ResizeService) {}
 
@@ -27,10 +26,11 @@ export class DocumentContentComponent implements OnInit, OnDestroy  {
 
   ngOnInit(): void {
     this.documentUpdatedSubscription = this.socketService.documentUpdated().subscribe(change => {
+
       if (change.length > 0) {
-        this.content = this.content.substring(0, change.position) + change.content + this.content.substring(change.position);
+        this.file.data = this.file.data.substring(0, change.position) + change.content + this.file.data.substring(change.position);
       } else {
-        this.content = this.content.substring(0, change.position+1) + this.content.substring(change.position + Math.abs(change.length)+1);
+        this.file.data = this.file.data.substring(0, change.position+1) + this.file.data.substring(change.position + Math.abs(change.length)+1);
       }
       this.previousDocumentLength += change.length
     });
@@ -54,12 +54,16 @@ export class DocumentContentComponent implements OnInit, OnDestroy  {
       content: addedChars,
       position: cursorPosition - 1,
       length: changeLength
-    }, this.documentId);
+    }, this.file.id);
   }
 
   resize()  {
     this.resizeService.currentLeftWidth.subscribe(value => {
       this.width = window.innerWidth - value;
     });
+  }
+
+  saveFile() {
+    console.log(this.file)
   }
 }

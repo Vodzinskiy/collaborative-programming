@@ -5,6 +5,7 @@ import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.annotation.OnConnect;
 import com.corundumstudio.socketio.annotation.OnDisconnect;
 import com.corundumstudio.socketio.annotation.OnEvent;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import vodzinskiy.backend.dto.SocketChangeDto;
@@ -12,23 +13,22 @@ import vodzinskiy.backend.dto.SocketChangeDto;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
-public class DocumentSocketHandler {
+public class SocketHandler {
     //private final Map<String, StringBuffer> documents = new ConcurrentHashMap<>();
 
     private final SocketIOServer server;
 
-    public DocumentSocketHandler(SocketIOServer server) {
-        this.server = server;
-    }
-
     @OnConnect
     private void onConnect(SocketIOClient client) {
-
+        String projectId = client.getHandshakeData().getSingleUrlParam("projectId");
+        client.joinRoom(projectId);
     }
 
     @OnDisconnect
     private void onDisconnect(SocketIOClient client) {
+        client.getAllRooms().stream().findFirst().ifPresent(client::leaveRoom);
     }
 
     @OnEvent("updateDocumentChar")

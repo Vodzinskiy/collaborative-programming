@@ -20,14 +20,13 @@ export class FileService {
   private tabIndexSubject = new BehaviorSubject<number | null>(null);
   public tabIndexObservable$ = this.tabIndexSubject.asObservable();
 
-  private filesSubject = new BehaviorSubject<FileModel[]>(this.files);
+  filesSubject = new BehaviorSubject<FileModel[]>(this.files);
   filesObservable$: Observable<FileModel[]> = this.filesSubject.asObservable();
 
   private openFilesSubject = new BehaviorSubject<FileModel[]>(this.openFiles);
   openFilesObservable$: Observable<FileModel[]> = this.openFilesSubject.asObservable();
 
-  constructor(private http: HttpClient, public dialog: MatDialog) {
-  }
+  constructor(private http: HttpClient, public dialog: MatDialog) {}
 
   addFile(type: 'directory' | 'file', path: string, localTree: MonacoTreeElement[], fullPath: string) {
     const title = type === 'directory' ? "Нова директорія" : "Новий файл";
@@ -105,6 +104,12 @@ export class FileService {
     const tabIndex = this.openFiles.findIndex(file => file.path === name);
     if (tabIndex !== -1) {
       this.tabIndexSubject.next(tabIndex);
+    } else {
+      const fileToOpen = this.filesSubject.value.find(file => file.path === name);
+      if (fileToOpen) {
+        const fileModel = new FileModel(fileToOpen.name, fileToOpen.data, fileToOpen.path);
+        this.openFile(fileModel);
+      }
     }
   }
 }

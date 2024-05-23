@@ -15,14 +15,19 @@ export class ProjectDetailsComponent implements OnInit {
   constructor(protected projectService: ProjectService, private socketService: SocketService) {}
 
   ngOnInit(): void {
+
     this.projectService.project$.subscribe({
         next: project => {
           this.id = project?.id ?? '';
           this.projectName = project?.name ?? '';
           this.members = project?.members ? [project.owner, ...project.members] : [];
+          /*if (this.id !== "") {
+            this.socketService.connectToSocket(this.id)
+          }*/
         }
       }
     )
+
     this.socketService.memberListUpdate().subscribe({
       next: m => this.members = m
     })

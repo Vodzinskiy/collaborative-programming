@@ -1,9 +1,10 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import io from 'socket.io-client';
-import { Observable } from 'rxjs';
+import {Observable} from 'rxjs';
 
 import {env} from "../../../environments/environment";
-import {Change} from "../models/change.dto";
+import {FileService} from "../../modules/workspace/services/file.service";
+import {FileModel} from "../models/file.model";
 
 @Injectable({
   providedIn: 'root'
@@ -11,14 +12,16 @@ import {Change} from "../models/change.dto";
 export class SocketService {
   private readonly socket;
 
-  constructor() {
-    this.socket = io(env.SOCKET_URL, { autoConnect: false });
+  constructor(public fileService: FileService) {
+    this.socket = io(env.SOCKET_URL, {autoConnect: false, transports: ["websocket"]});
   }
 
   connectToSocket(projectId: string | undefined) {
     if (this.socket) {
-      this.socket.io.opts.query = { projectId: projectId };
+      this.socket.io.opts.query = {projectId: projectId};
       this.socket.connect();
+      this.onFilesReceived();
+      this.onRequestFiles()
     }
   }
 
@@ -28,14 +31,14 @@ export class SocketService {
     }
   }
 
-  updateDocument(change: Change, documentId: string): void {
-    this.socket.emit('updateDocumentChar', change, documentId);
+  updateDocument(change: any, documentId: string): void {
+    this.socket.emit('updateDocument', change, documentId);
   }
 
-  documentUpdated(): Observable<Change> {
-    return new Observable<Change>(observer => {
-      this.socket.on('documentUpdatedChar', (changeDto: Change) => {
-        observer.next(changeDto);
+  documentUpdated() {
+    return new Observable(observer => {
+      this.socket.on('editorChanges', (operations: any) => {
+        observer.next(operations);
       });
     });
   }
@@ -43,9 +46,20 @@ export class SocketService {
   public memberListUpdate() {
     return new Observable<string[]>(observer => {
       this.socket.on('projectUserListUpdated', (members: string[]) => {
-        console.log(members)
         observer.next(members);
       });
     });
+  }
+
+  private onRequestFiles() {
+    this.socket.on('requestFiles', (recipientId: string) => {
+      this.socket.emit('files', this.fileService.filesSubject.value, recipientId);
+    })
+  }
+
+  private onFilesReceived() {
+    this.socket.on('files', (files: FileModel[]) => {
+      this.fileService.filesSubject.next(files);
+    })
   }
 }

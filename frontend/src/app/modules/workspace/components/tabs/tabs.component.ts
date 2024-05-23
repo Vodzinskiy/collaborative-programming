@@ -4,7 +4,6 @@ import {MatTabGroup} from "@angular/material/tabs";
 import {FileService} from "../../services/file.service";
 import {FileModel} from "../../../../core/models/file.model";
 
-
 @Component({
   selector: 'app-tabs',
   templateUrl: './tabs.component.html',
@@ -12,8 +11,6 @@ import {FileModel} from "../../../../core/models/file.model";
 })
 export class TabsComponent implements OnInit {
   @ViewChild('tabGroup') tabGroup!: MatTabGroup;
-  //@ViewChildren(MatTab) tabs!: QueryList<MatTab>;
-  //@ViewChildren(DocumentContentComponent) contentTabs!: QueryList<DocumentContentComponent>;
   tabs: FileModel[] = []
   width: number = 0;
 
@@ -23,15 +20,6 @@ export class TabsComponent implements OnInit {
   onResize() {
     this.resize()
   }
-
-  /*ngAfterViewInit() {
-    const activeTab = this.tabs.find(tab => tab.isActive);
-    if (activeTab) {
-      const activeIndex = this.tabs.toArray().indexOf(activeTab);
-      const activeContentTab = this.contentTabs.toArray()[activeIndex];
-      activeContentTab.saveFile();
-    }
-  }*/
 
   closeTab(index: number) {
     this.fileService.closeFile(index)

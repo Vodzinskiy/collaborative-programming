@@ -8,21 +8,28 @@ import com.corundumstudio.socketio.annotation.OnEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import vodzinskiy.backend.dto.SocketChangeDto;
+import vodzinskiy.backend.model.File;
 
-import java.util.UUID;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class SocketHandler {
-    //private final Map<String, StringBuffer> documents = new ConcurrentHashMap<>();
-
     private final SocketIOServer server;
 
     @OnConnect
     private void onConnect(SocketIOClient client) {
         String projectId = client.getHandshakeData().getSingleUrlParam("projectId");
+        Collection<SocketIOClient> clients = server.getRoomOperations(projectId).getClients();
+        Iterator<SocketIOClient> iterator = clients.iterator();
+        if (clients.size() > 1) {
+            SocketIOClient sourcedClient = iterator.next();
+            if (sourcedClient.getSessionId().equals(client.getSessionId()) && iterator.hasNext()) {
+                sourcedClient = iterator.next();
+            }
+            sourcedClient.sendEvent("requestFiles", client.getSessionId());
+        }
         client.joinRoom(projectId);
     }
 
@@ -31,22 +38,18 @@ public class SocketHandler {
         client.getAllRooms().stream().findFirst().ifPresent(client::leaveRoom);
     }
 
-    @OnEvent("updateDocumentChar")
-    public void onUpdateDocument(SocketIOClient client, SocketChangeDto change, UUID documentId) {
-        /*StringBuffer document = documents.computeIfAbsent(documentId, k -> new StringBuffer());
-        if (change.length() > 0) {
-            document.insert(change.position(), change.content());
-        } else {
-            document.delete(change.position() + 1, change.position() + Math.abs(change.length()) + 1);
+    @OnEvent("updateDocument")
+    public void onUpdateDocument(SocketIOClient client, List<Map<String, Object>> change, UUID documentId) {
+        String projectId = client.getHandshakeData().getSingleUrlParam("projectId");
+        if (projectId != null) {
+            server.getRoomOperations(projectId).getClients().stream()
+                    .filter(c -> !c.getSessionId().equals(client.getSessionId()))
+                    .forEach(c -> c.sendEvent("editorChanges", change));
         }
-        log.info(document.toString());*/
+    }
 
-        for (SocketIOClient c : server.getAllClients()) {
-            if (!c.getSessionId().equals(client.getSessionId())) {
-                c.sendEvent("documentUpdatedChar", change);
-            }
-        }
-
-        //server.getBroadcastOperations().sendEvent("documentUpdatedChar", change);
+    @OnEvent("files")
+    public void onFiles(SocketIOClient client, List<File> files, String recipientId) {
+        server.getClient(UUID.fromString(recipientId)).sendEvent("files", files);
     }
 }

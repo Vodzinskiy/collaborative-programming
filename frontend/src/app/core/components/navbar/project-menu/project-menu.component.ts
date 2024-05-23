@@ -25,6 +25,7 @@ export class ProjectMenuComponent implements OnInit {
           if (project !== null) {
             this.owner = project.role === Role.OWNER
             this.id = project.id
+            this.socket.connectToSocket(project.id)
           } else {
             this.id = ''
           }

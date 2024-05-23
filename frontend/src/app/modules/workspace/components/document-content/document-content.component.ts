@@ -9,12 +9,12 @@ import {FileModel} from "../../../../core/models/file.model";
   templateUrl: './document-content.component.html',
   styleUrl: './document-content.component.scss'
 })
-export class DocumentContentComponent implements OnInit, OnDestroy  {
+export class DocumentContentComponent implements OnInit, OnDestroy {
   @Input() file!: FileModel
-  private previousDocumentLength: number = 0;
   private documentUpdatedSubscription!: Subscription;
   width: number = 0;
-
+  isRemoteChange = false;
+  editor: any;
   editorOptions = {theme: 'vs-dark', language: 'typescript', automaticLayout: true};
 
   constructor(private socketService: SocketService, protected resizeService: ResizeService) {}
@@ -25,14 +25,9 @@ export class DocumentContentComponent implements OnInit, OnDestroy  {
   }
 
   ngOnInit(): void {
-    this.documentUpdatedSubscription = this.socketService.documentUpdated().subscribe(change => {
-
-      if (change.length > 0) {
-        this.file.data = this.file.data.substring(0, change.position) + change.content + this.file.data.substring(change.position);
-      } else {
-        this.file.data = this.file.data.substring(0, change.position+1) + this.file.data.substring(change.position + Math.abs(change.length)+1);
-      }
-      this.previousDocumentLength += change.length
+    this.socketService.documentUpdated().subscribe((operations: any) => {
+      this.isRemoteChange = true;
+      this.editor.getModel().applyEdits(operations);
     });
     this.resize();
   }
@@ -41,29 +36,25 @@ export class DocumentContentComponent implements OnInit, OnDestroy  {
     this.documentUpdatedSubscription.unsubscribe();
   }
 
-  onDocumentChange(event: any): void {
-    const textarea = event.target as HTMLTextAreaElement;
-    const newValue = textarea.value;
-
-    const cursorPosition = textarea.selectionStart;
-    const changeLength = newValue.length - this.previousDocumentLength
-    const addedChars = newValue.slice(cursorPosition - changeLength, cursorPosition);
-    this.previousDocumentLength = newValue.length;
-
-    this.socketService.updateDocument({
-      content: addedChars,
-      position: cursorPosition - 1,
-      length: changeLength
-    }, this.file.id);
-  }
-
-  resize()  {
+  resize() {
     this.resizeService.currentLeftWidth.subscribe(value => {
       this.width = window.innerWidth - value;
     });
   }
 
-  saveFile() {
-    console.log(this.file)
+  onEditorInit(editor: any) {
+    this.editor = editor;
+    this.editor.onDidChangeModelContent((event: any) => {
+      if (!this.isRemoteChange) {
+        const operations = event.changes.map((change: any) => ({
+          range: change.range,
+          text: change.text,
+          rangeLength: change.rangeLength,
+          rangeOffset: change.rangeOffset,
+        }));
+        this.socketService.updateDocument(operations, this.file.id);
+      }
+      this.isRemoteChange = false;
+    });
   }
 }

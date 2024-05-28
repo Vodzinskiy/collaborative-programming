@@ -8,13 +8,16 @@ import {MatDialog} from "@angular/material/dialog";
 import {FileSocketService} from "../../../core/services/file-socket.service";
 import {UUID} from "crypto";
 import {ProjectObject} from "../../../core/models/project-object.dto";
+import JSZip from 'jszip';
+import {saveAs} from 'file-saver';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class FileService {
-  private files: any[] = []
-  private openFiles: FileModel[] = []
+  public files: any[] = []
+  public openFiles: FileModel[] = []
 
   private tabIndexSubject = new BehaviorSubject<number | null>(null);
   public tabIndexObservable$ = this.tabIndexSubject.asObservable();
@@ -22,7 +25,7 @@ export class FileService {
   filesSubject = new BehaviorSubject<FileModel[]>(this.files);
   filesObservable$: Observable<FileModel[]> = this.filesSubject.asObservable();
 
-  private openFilesSubject = new BehaviorSubject<FileModel[]>(this.openFiles);
+  openFilesSubject = new BehaviorSubject<FileModel[]>(this.openFiles);
   openFilesObservable$: Observable<FileModel[]> = this.openFilesSubject.asObservable();
 
   constructor(public socket: FileSocketService, public dialog: MatDialog) {
@@ -45,8 +48,6 @@ export class FileService {
   }
 
   public addFile(type: 'directory' | 'file', path: string, localTree: MonacoTreeElement[], fullPath: string, name: string, author: boolean = false, id: UUID | undefined = undefined) {
-    console.log(this.filesSubject.value)
-    console.log(localTree)
     const spited = path.split('/');
     if (spited.length === 1) {
       if (path === '') {
@@ -90,6 +91,17 @@ export class FileService {
     }
   }
 
+  updateFile(path: string, name: string) {
+    const file = this.findFileRecursive(this.filesSubject.value, path);
+    if (file !== null) {
+      file.name = name;
+      if (file.fPath) {
+        file.fPath = file.fPath.replace(/[^/]*$/, name);
+      }
+      this.filesSubject.next(this.filesSubject.value);
+    }
+  }
+
   applyChanges(id: UUID, changes: any[]): void {
     const file = this.findFileRecursive(this.filesSubject.value, "", id);
     changes.sort((a, b) => a.rangeOffset - b.rangeOffset);
@@ -109,7 +121,7 @@ export class FileService {
     for (let i = 0; i < lineNumber - 1; i++) {
       index += lines[i].length + 1;
     }
-    index += Math.min(column - 1, lines[lineNumber - 1].length);
+    index += column - 1;
     return index;
   }
 
@@ -142,10 +154,10 @@ export class FileService {
 
   private findFileRecursive(items: any[], name: string, id?: UUID): any {
     for (const item of items) {
-      if (item.fPath === name || item.id === id) {
+      if (!item.content && (item.fPath === name || item.id === id)) {
         return item;
       }
-      if (item.type === 'directory' && item.content) {
+      if (item.content) {
         const foundFile = this.findFileRecursive(item.content, name);
         if (foundFile) {
           return foundFile;
@@ -153,6 +165,23 @@ export class FileService {
       }
     }
     return null;
+  }
+
+  public saveFiles() {
+    const zip = new JSZip;
+    const processFiles = (items: any[], currentPath: string) => {
+      for (const item of items) {
+        if (!item.content) {
+          zip.file(item.fPath, item.data);
+        } else {
+          processFiles(item.content, `${currentPath}/${item.name}`);
+        }
+      }
+    };
+    processFiles(this.filesSubject.value, '');
+    zip.generateAsync({type: 'blob'}).then(function (content) {
+      saveAs(content, 'files.zip');
+    });
   }
 }
 

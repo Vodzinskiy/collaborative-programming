@@ -77,6 +77,7 @@ export class ProjectMenuComponent implements OnInit {
     if (this.owner) {
       this.projectService.deleteProject(this.id).subscribe({
           next: () => {
+            this.socket.disconnectFromSocket()
             void this.router.navigate(['/'])
             this.owner = false
           }

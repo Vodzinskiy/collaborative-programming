@@ -74,14 +74,31 @@ export class FileTreeComponent implements OnInit {
     }
     if (index === parts.length - 1) {
       file.name = name
+      this.fileService.updateFile(path, name);
     } else if (file.content) {
       this.rename(name, path, file.content, index + 1);
     }
   }
 
-  remove(path: string, localTree: MonacoTreeElement[]) {
+  remove(path: string, localTree: MonacoTreeElement[], closeAllInDir = true) {
+    const closeFileByPath = (filePath: string) => {
+      const index = this.fileService.openFiles.findIndex(file => file.fPath === filePath);
+      if (index !== -1) this.fileService.closeFile(index);
+    };
+    const processDirectory = (dirPath: string, tree: MonacoTreeElement[]) => {
+      tree.forEach(el => {
+        const fullPath = `${dirPath}/${el.name}`;
+        el.content ? processDirectory(fullPath, el.content) : closeFileByPath(fullPath);
+      });
+    };
+    if (closeAllInDir) {
+      const [name] = path.split('/');
+      const dir = localTree.find(el => el.name === name);
+      if (dir?.content) processDirectory(name, dir.content);
+    }
+    closeFileByPath(path);
     const [name, ...rest] = path.split('/');
-    const index = localTree.findIndex((el) => el.name === name);
+    const index = localTree.findIndex(el => el.name === name);
     if (this.author) {
       this.fileSocket.removeFile(path);
       this.author = false;
@@ -90,8 +107,8 @@ export class FileTreeComponent implements OnInit {
       if (rest.length === 0) {
         localTree.splice(index, 1);
       } else {
-        const {content} = localTree[index];
-        if (content) this.remove(rest.join('/'), content);
+        const content = localTree[index].content;
+        if (content) this.remove(rest.join('/'), content, false);
       }
     }
   }

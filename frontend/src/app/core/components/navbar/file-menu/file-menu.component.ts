@@ -30,4 +30,8 @@ export class FileMenuComponent implements OnInit {
   newDirectory() {
     this.fileService.createFile("directory", '', this.tree, "")
   }
+
+  saveFiles() {
+    this.fileService.saveFiles()
+  }
 }

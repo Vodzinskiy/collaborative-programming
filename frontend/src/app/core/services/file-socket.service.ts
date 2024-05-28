@@ -14,11 +14,14 @@ export class FileSocketService {
     this.socket.getSocket().emit('updateDocument', change, documentId);
   }
 
-  documentUpdated(fileId: string) {
+  documentUpdated(fileId?: string):Observable<any> {
     return new Observable(observer => {
       this.socket.getSocket().on('editorChanges', (operations: any, id: string) => {
         if (fileId === id) {
           observer.next(operations);
+        }
+        if (!fileId) {
+          observer.next({operations, id});
         }
       });
     });

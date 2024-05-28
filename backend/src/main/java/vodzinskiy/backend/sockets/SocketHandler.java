@@ -41,6 +41,7 @@ public class SocketHandler {
 
     @OnEvent("updateDocument")
     public void onUpdateDocument(SocketIOClient client, List<Map<String, Object>> change, UUID documentId) {
+        log.info("onUpdateDocument called");
         String projectId = client.getHandshakeData().getSingleUrlParam("projectId");
         if (projectId != null) {
             server.getRoomOperations(projectId).getClients().stream()
@@ -57,7 +58,6 @@ public class SocketHandler {
     @OnEvent("addFile")
     public void onAddFile(SocketIOClient client, ProjectObject object) {
         String projectId = client.getHandshakeData().getSingleUrlParam("projectId");
-        log.info(object.path());
         if (projectId != null) {
             server.getRoomOperations(projectId).getClients().stream()
                     .filter(c -> !c.getSessionId().equals(client.getSessionId()))

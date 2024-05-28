@@ -25,7 +25,13 @@ export class FileService {
   private openFilesSubject = new BehaviorSubject<FileModel[]>(this.openFiles);
   openFilesObservable$: Observable<FileModel[]> = this.openFilesSubject.asObservable();
 
-  constructor(public socket: FileSocketService, public dialog: MatDialog) {}
+  constructor(public socket: FileSocketService, public dialog: MatDialog) {
+    this.socket.documentUpdated().subscribe(({operations, id}) => {
+      if (!this.openFilesSubject.value.some(file => file.id === id)) {
+        this.applyChanges(id, operations);
+      }
+    });
+  }
 
   createFile(type: 'directory' | 'file', path: string, localTree: MonacoTreeElement[], fullPath: string) {
     const title = type === 'directory' ? "Нова директорія" : "Новий файл";
@@ -39,6 +45,8 @@ export class FileService {
   }
 
   public addFile(type: 'directory' | 'file', path: string, localTree: MonacoTreeElement[], fullPath: string, name: string, author: boolean = false, id: UUID | undefined = undefined) {
+    console.log(this.filesSubject.value)
+    console.log(localTree)
     const spited = path.split('/');
     if (spited.length === 1) {
       if (path === '') {
@@ -82,6 +90,29 @@ export class FileService {
     }
   }
 
+  applyChanges(id: UUID, changes: any[]): void {
+    const file = this.findFileRecursive(this.filesSubject.value, "", id);
+    changes.sort((a, b) => a.rangeOffset - b.rangeOffset);
+    let offset = 0;
+    for (const change of changes) {
+      const startIndex = this.getIndexFromPosition(file.data, change.range.startLineNumber, change.range.startColumn) + offset;
+      const endIndex = this.getIndexFromPosition(file.data, change.range.endLineNumber, change.range.endColumn) + offset;
+      const removedText = file.data.slice(startIndex, endIndex);
+      file.data = file.data.slice(0, startIndex) + change.text + file.data.slice(endIndex);
+      offset += change.text.length - removedText.length;
+    }
+  }
+
+  private getIndexFromPosition(fileData: string, lineNumber: number, column: number): number {
+    const lines = fileData.split('\n');
+    let index = 0;
+    for (let i = 0; i < lineNumber - 1; i++) {
+      index += lines[i].length + 1;
+    }
+    index += Math.min(column - 1, lines[lineNumber - 1].length);
+    return index;
+  }
+
   openFile(file: FileModel) {
     if (file) {
       this.openFiles.push(file);
@@ -109,9 +140,9 @@ export class FileService {
     }
   }
 
-  private findFileRecursive(items: any[], name: string): any {
+  private findFileRecursive(items: any[], name: string, id?: UUID): any {
     for (const item of items) {
-      if (item.fPath === name) {
+      if (item.fPath === name || item.id === id) {
         return item;
       }
       if (item.type === 'directory' && item.content) {

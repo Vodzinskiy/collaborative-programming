@@ -14,7 +14,6 @@ export class DocumentContentComponent implements OnInit {
   isRemoteChange = false;
   editor: any;
   editorOptions = {theme: 'vs-dark', language: 'typescript', automaticLayout: true};
-
   constructor(private socket: FileSocketService, protected resizeService: ResizeService) {}
 
   @HostListener('window:resize', ['$event'])

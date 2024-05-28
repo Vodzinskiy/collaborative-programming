@@ -5,12 +5,12 @@ export class FileModel {
   name: string;
   data: string;
   content = undefined
-  path?: string
+  fPath?: string
 
-  constructor(name: string, data: string, path?: string) {
-    this.id = crypto.randomUUID();
+  constructor(id: UUID | undefined, name: string, data: string, fPath?: string) {
+    this.id = id ? id : crypto.randomUUID();
     this.name = name;
     this.data = data
-    this.path = path
+    this.fPath = fPath
   }
 }

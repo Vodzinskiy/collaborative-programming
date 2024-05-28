@@ -1,23 +1,21 @@
-import {Component, HostListener, Input, OnDestroy, OnInit} from '@angular/core';
-import {Subscription} from "rxjs";
-import {SocketService} from "../../../../core/services/socket.service";
+import {Component, HostListener, Input, OnInit} from '@angular/core';
 import {ResizeService} from "../../services/resize.service";
 import {FileModel} from "../../../../core/models/file.model";
+import {FileSocketService} from "../../../../core/services/file-socket.service";
 
 @Component({
   selector: 'app-document-content',
   templateUrl: './document-content.component.html',
   styleUrl: './document-content.component.scss'
 })
-export class DocumentContentComponent implements OnInit, OnDestroy {
+export class DocumentContentComponent implements OnInit {
   @Input() file!: FileModel
-  private documentUpdatedSubscription!: Subscription;
   width: number = 0;
   isRemoteChange = false;
   editor: any;
   editorOptions = {theme: 'vs-dark', language: 'typescript', automaticLayout: true};
 
-  constructor(private socketService: SocketService, protected resizeService: ResizeService) {}
+  constructor(private socket: FileSocketService, protected resizeService: ResizeService) {}
 
   @HostListener('window:resize', ['$event'])
   onResize() {
@@ -25,15 +23,13 @@ export class DocumentContentComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.socketService.documentUpdated().subscribe((operations: any) => {
-      this.isRemoteChange = true;
-      this.editor.getModel().applyEdits(operations);
+    this.socket.documentUpdated(this.file.id).subscribe((operations: any) => {
+      if (this.editor && this.editor.getModel()) {
+        this.isRemoteChange = true;
+        this.editor.getModel().applyEdits(operations);
+      }
     });
     this.resize();
-  }
-
-  ngOnDestroy(): void {
-    this.documentUpdatedSubscription.unsubscribe();
   }
 
   resize() {
@@ -45,14 +41,14 @@ export class DocumentContentComponent implements OnInit, OnDestroy {
   onEditorInit(editor: any) {
     this.editor = editor;
     this.editor.onDidChangeModelContent((event: any) => {
-      if (!this.isRemoteChange) {
+      if (!this.isRemoteChange && !event.isFlush) {
         const operations = event.changes.map((change: any) => ({
           range: change.range,
           text: change.text,
           rangeLength: change.rangeLength,
           rangeOffset: change.rangeOffset,
         }));
-        this.socketService.updateDocument(operations, this.file.id);
+        this.socket.updateDocument(operations, this.file.id);
       }
       this.isRemoteChange = false;
     });

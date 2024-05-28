@@ -24,10 +24,10 @@ export class FileMenuComponent implements OnInit {
   }
 
   newFile() {
-    this.fileService.addFile("file", '', this.tree, "")
+    this.fileService.createFile("file", '', this.tree, "")
   }
 
   newDirectory() {
-    this.fileService.addFile("directory", '', this.tree, "")
+    this.fileService.createFile("directory", '', this.tree, "")
   }
 }

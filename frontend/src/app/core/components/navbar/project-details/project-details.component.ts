@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ProjectService} from "../../../services/project.service";
-import {SocketService} from "../../../services/socket.service";
+import {ProjectSocketService} from "../../../services/project-socket.service";
 
 @Component({
   selector: 'app-project-details',
@@ -12,23 +12,18 @@ export class ProjectDetailsComponent implements OnInit {
   projectName: string = "";
   protected id: string = '';
 
-  constructor(protected projectService: ProjectService, private socketService: SocketService) {}
+  constructor(protected projectService: ProjectService, private socket: ProjectSocketService) {}
 
   ngOnInit(): void {
-
     this.projectService.project$.subscribe({
         next: project => {
           this.id = project?.id ?? '';
           this.projectName = project?.name ?? '';
           this.members = project?.members ? [project.owner, ...project.members] : [];
-          /*if (this.id !== "") {
-            this.socketService.connectToSocket(this.id)
-          }*/
         }
       }
     )
-
-    this.socketService.memberListUpdate().subscribe({
+    this.socket.memberListUpdate().subscribe({
       next: m => this.members = m
     })
   }

@@ -8,6 +8,7 @@ import com.corundumstudio.socketio.annotation.OnEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import vodzinskiy.backend.dto.ProjectObject;
 import vodzinskiy.backend.model.File;
 
 import java.util.*;
@@ -44,12 +45,43 @@ public class SocketHandler {
         if (projectId != null) {
             server.getRoomOperations(projectId).getClients().stream()
                     .filter(c -> !c.getSessionId().equals(client.getSessionId()))
-                    .forEach(c -> c.sendEvent("editorChanges", change));
+                    .forEach(c -> c.sendEvent("editorChanges", change, documentId));
         }
     }
 
     @OnEvent("files")
     public void onFiles(SocketIOClient client, List<File> files, String recipientId) {
         server.getClient(UUID.fromString(recipientId)).sendEvent("files", files);
+    }
+
+    @OnEvent("addFile")
+    public void onAddFile(SocketIOClient client, ProjectObject object) {
+        String projectId = client.getHandshakeData().getSingleUrlParam("projectId");
+        log.info(object.path());
+        if (projectId != null) {
+            server.getRoomOperations(projectId).getClients().stream()
+                    .filter(c -> !c.getSessionId().equals(client.getSessionId()))
+                    .forEach(c -> c.sendEvent("addFile", object));
+        }
+    }
+
+    @OnEvent("renameFile")
+    public void onRenameFile(SocketIOClient client, String path, String newName) {
+        String projectId = client.getHandshakeData().getSingleUrlParam("projectId");
+        if (projectId != null) {
+            server.getRoomOperations(projectId).getClients().stream()
+                    .filter(c -> !c.getSessionId().equals(client.getSessionId()))
+                    .forEach(c -> c.sendEvent("renameFile", path, newName));
+        }
+    }
+
+    @OnEvent("removeFile")
+    public void onRemoveFile(SocketIOClient client, String path) {
+        String projectId = client.getHandshakeData().getSingleUrlParam("projectId");
+        if (projectId != null) {
+            server.getRoomOperations(projectId).getClients().stream()
+                    .filter(c -> !c.getSessionId().equals(client.getSessionId()))
+                    .forEach(c -> c.sendEvent("removeFile", path));
+        }
     }
 }

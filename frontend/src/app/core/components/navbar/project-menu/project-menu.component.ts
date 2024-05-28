@@ -6,6 +6,7 @@ import {DialogData} from "../../../models/dialog-data.dto";
 import {Role} from "../../../models/project.dto";
 import {Router} from "@angular/router";
 import {SocketService} from "../../../services/socket.service";
+import {FileService} from "../../../../modules/workspace/services/file.service";
 
 @Component({
   selector: 'app-project-menu',
@@ -16,8 +17,7 @@ export class ProjectMenuComponent implements OnInit {
   protected owner: boolean = false;
   private id: string = '';
 
-  constructor(private projectService: ProjectService, public dialog: MatDialog, private router: Router, private socket: SocketService) {
-  }
+  constructor(private projectService: ProjectService, public dialog: MatDialog, private router: Router, private socket: SocketService, public fileService: FileService) {}
 
   ngOnInit(): void {
     this.projectService.project$.subscribe({
@@ -41,7 +41,7 @@ export class ProjectMenuComponent implements OnInit {
       if (result) {
         this.projectService.createProject(result).subscribe({
           next: (project) => {
-            this.socket.connectToSocket(project.body?.id)
+            //this.socket.connectToSocket(project.body?.id)
             void this.router.navigate(['/p', project.body?.id])
           }
         })
@@ -56,7 +56,7 @@ export class ProjectMenuComponent implements OnInit {
       if (result) {
         this.projectService.joinProject(result).subscribe({
           next: (project) => {
-            this.socket.connectToSocket(project.body?.id)
+            //this.socket.connectToSocket(project.body?.id)
             void this.router.navigate(['/p', project.body?.id])
           }
         })
@@ -65,12 +65,14 @@ export class ProjectMenuComponent implements OnInit {
   }
 
   leaveProject() {
-    this.projectService.leaveProject(this.id).subscribe({
+    this.projectService.leaveProject(this.id)
+      /*.subscribe({
       next: () => {
         this.socket.disconnectFromSocket()
+        this.fileService.clearAllData()
         void this.router.navigate(['/'])
       }
-    })
+    })*/
   }
 
   deleteProject() {
@@ -78,6 +80,7 @@ export class ProjectMenuComponent implements OnInit {
       this.projectService.deleteProject(this.id).subscribe({
           next: () => {
             this.socket.disconnectFromSocket()
+            this.fileService.clearAllData()
             void this.router.navigate(['/'])
             this.owner = false
           }

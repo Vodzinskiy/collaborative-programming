@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ContextMenuAction, MonacoTreeElement} from "ngx-monaco-tree";
 import {DialogData} from "../../../../core/models/dialog-data.dto";
 import {DialogComponent} from "../../../../shared/components/dialog/dialog.component";
@@ -7,16 +7,18 @@ import {FileService} from "../../services/file.service";
 import {FileSocketService} from "../../../../core/services/file-socket.service";
 import {ProjectSocketService} from "../../../../core/services/project-socket.service";
 import {ProjectObject} from "../../../../core/models/project-object.dto";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-file-tree',
   templateUrl: './file-tree.component.html',
   styleUrl: './file-tree.component.scss'
 })
-export class FileTreeComponent implements OnInit {
+export class FileTreeComponent implements OnInit, OnDestroy {
   dark: boolean = true;
   author: boolean = false;
   tree: any[] = [];
+  private subscriptions: Subscription[] = [];
 
   constructor(public dialog: MatDialog, public fileService: FileService,
               public fileSocket: FileSocketService, public projectSocket: ProjectSocketService) {}
@@ -24,18 +26,25 @@ export class FileTreeComponent implements OnInit {
   ngOnInit(): void {
     this.projectSocket.onRequestFiles();
     this.projectSocket.onFilesReceived();
-    this.fileService.filesObservable$.subscribe({
-      next: f => this.tree = f
-    });
-    this.fileSocket.onAddFile().subscribe((o: ProjectObject) => {
-      this.fileService.addFile(o.type, o.path, this.tree, o.fPath, o.name, false, o.id)
-    });
-    this.fileSocket.onRenameFile().subscribe(({path, newName}) => {
-      this.rename(newName, path, this.tree);
-    });
-    this.fileSocket.onRemoveFile().subscribe((path) => {
-      this.remove(path, this.tree);
-    });
+
+    this.subscriptions.push(
+      this.fileService.filesObservable$.subscribe({
+        next: f => this.tree = f
+      }),
+      this.fileSocket.onAddFile().subscribe((o: ProjectObject) => {
+        this.fileService.addFile(o.type, o.path, this.tree, o.fPath, o.name, false, o.id)
+      }),
+      this.fileSocket.onRenameFile().subscribe(({path, newName}) => {
+        this.rename(newName, path, this.tree);
+      }),
+      this.fileSocket.onRemoveFile().subscribe((path) => {
+        this.remove(path, this.tree);
+      })
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   handleContextMenu(action: ContextMenuAction) {

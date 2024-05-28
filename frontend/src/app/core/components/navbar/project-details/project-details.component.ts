@@ -24,7 +24,10 @@ export class ProjectDetailsComponent implements OnInit {
       }
     )
     this.socket.memberListUpdate().subscribe({
-      next: m => this.members = m
+      next: m => {
+        this.members = m;
+        m.length === 0 && this.projectService.leaveProject(this.id);
+      }
     })
   }
 

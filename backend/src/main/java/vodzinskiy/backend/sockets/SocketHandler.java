@@ -41,7 +41,6 @@ public class SocketHandler {
 
     @OnEvent("updateDocument")
     public void onUpdateDocument(SocketIOClient client, List<Map<String, Object>> change, UUID documentId) {
-        log.info("onUpdateDocument called");
         String projectId = client.getHandshakeData().getSingleUrlParam("projectId");
         if (projectId != null) {
             server.getRoomOperations(projectId).getClients().stream()

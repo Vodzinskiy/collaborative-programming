@@ -183,5 +183,13 @@ export class FileService {
       saveAs(content, 'files.zip');
     });
   }
+
+  public clearAllData() {
+    this.files = [];
+    this.openFiles = [];
+    this.tabIndexSubject.next(null);
+    this.filesSubject.next([]);
+    this.openFilesSubject.next([]);
+  }
 }
 

@@ -2,6 +2,7 @@ import {Component, HostListener, Input, OnInit} from '@angular/core';
 import {ResizeService} from "../../services/resize.service";
 import {FileModel} from "../../../../core/models/file.model";
 import {FileSocketService} from "../../../../core/services/file-socket.service";
+import { languageExtensions } from '../../../../../assets/language-extensions';
 
 @Component({
   selector: 'app-document-content',
@@ -13,7 +14,7 @@ export class DocumentContentComponent implements OnInit {
   width: number = 0;
   isRemoteChange = false;
   editor: any;
-  editorOptions = {theme: 'vs-dark', language: 'typescript', automaticLayout: true};
+  editorOptions = {theme: 'vs-dark', language:"java", automaticLayout: true};
   constructor(private socket: FileSocketService, protected resizeService: ResizeService) {}
 
   @HostListener('window:resize', ['$event'])
@@ -31,6 +32,11 @@ export class DocumentContentComponent implements OnInit {
     this.resize();
   }
 
+  getLanguageFromExtension(fileName: string): string {
+    const fileExtension = fileName.split('.').pop()?.toLowerCase() || '';
+    return languageExtensions[fileExtension] || 'plaintext';
+  }
+
   resize() {
     this.resizeService.currentLeftWidth.subscribe(value => {
       this.width = window.innerWidth - value;
@@ -39,6 +45,7 @@ export class DocumentContentComponent implements OnInit {
 
   onEditorInit(editor: any) {
     this.editor = editor;
+    this.editor.language = this.getLanguageFromExtension(this.file.name)
     this.editor.onDidChangeModelContent((event: any) => {
       if (!this.isRemoteChange && !event.isFlush) {
         const operations = event.changes.map((change: any) => ({

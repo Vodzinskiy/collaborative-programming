@@ -6,13 +6,13 @@
     <mat-card-content>
       <form class="d-flex flex-column align-items-center" [formGroup]="signinForm">
         <app-custom-input [control]="getControl('email')"
-          placeholder="Електронна пошта"
-          requiredErrorMessage="Введіть електронну адресу">
+                          placeholder="Електронна пошта"
+                          requiredErrorMessage="Введіть електронну адресу">
         </app-custom-input>
         <app-custom-input [control]="getControl('password')"
-          placeholder="Пароль"
-          requiredErrorMessage="Введіть пароль"
-          isPassword="true">
+                          placeholder="Пароль"
+                          requiredErrorMessage="Введіть пароль"
+                          isPassword="true">
         </app-custom-input>
       </form>
     </mat-card-content>

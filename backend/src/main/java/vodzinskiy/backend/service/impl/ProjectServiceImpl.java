@@ -60,6 +60,7 @@ public class ProjectServiceImpl implements ProjectService {
         if (!getProject(projectId).getOwner().getId().equals(userId)) {
             throw new ForbiddenException("Only the owner can delete a project");
         }
+        server.getRoomOperations(projectId.toString()).sendEvent("projectUserListUpdated", new ArrayList<>());
         projectRepository.deleteById(projectId);
     }
 

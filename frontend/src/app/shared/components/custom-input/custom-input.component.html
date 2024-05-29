@@ -1,4 +1,4 @@
-<mat-form-field [ngClass]="{'has-error': control.invalid && (control.dirty || control.touched)}">
+<mat-form-field [ngClass]="{'has-error': (control.invalid && (control.dirty || control.touched)) || control.errors?.['incorrect']}">
   <input matInput
          [type]="isPassword ? (showPassword ? 'text' : 'password') : 'text'"
          [placeholder]="placeholder"
@@ -11,5 +11,11 @@
   </mat-error>
   <mat-error *ngIf="control.errors?.['email']">
     Введіть валідний email
+  </mat-error>
+  <mat-error *ngIf="control.errors?.['incorrect'] && isPassword">
+    Неправильний логін або пароль
+  </mat-error>
+  <mat-error *ngIf="control.errors?.['exists']">
+    Користувач з такою адресою ел. пошти вже існує
   </mat-error>
 </mat-form-field>

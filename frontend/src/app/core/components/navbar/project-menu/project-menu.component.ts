@@ -50,7 +50,7 @@ export class ProjectMenuComponent implements OnInit {
   }
 
   joinProject() {
-    const data: DialogData = {buttonTitle: "Доєднатись", placeholder: "ID", title: "Доєднатися до проекту"}
+    const data: DialogData = {buttonTitle: "Приєднатись", placeholder: "ID", title: "Приєднатись до проєкту"}
     const dialogRef = this.dialog.open(DialogComponent, {data});
     dialogRef.afterClosed().subscribe(result => {
       if (result) {

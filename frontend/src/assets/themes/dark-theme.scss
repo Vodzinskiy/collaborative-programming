@@ -3,8 +3,8 @@
 
 $theme: matx.define-theme((
   color: (
-    theme-type: light,
-    primary: matx.$m3-azure-palette,
+    theme-type: dark,
+    primary: matx.$m3-magenta-palette,
     tertiary: matx.$m3-blue-palette,
   )
 ));

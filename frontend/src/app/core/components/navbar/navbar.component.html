@@ -1,5 +1,5 @@
-<mat-toolbar class="d-flex align-content-center justify-content-between">
-  <div>
+<mat-toolbar class="d-flex align-content-center" [ngClass]="{'justify-content-between': (authService.isAuthenticated$ | async), 'justify-content-end': !(authService.isAuthenticated$ | async)}">
+  <div *ngIf="(authService.isAuthenticated$ | async)">
     <app-file-menu></app-file-menu>
     <app-project-menu></app-project-menu>
   </div>

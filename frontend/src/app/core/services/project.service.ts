@@ -15,31 +15,34 @@ export class ProjectService {
   private projectSubject = new BehaviorSubject<Project | null>(null);
   public project$ = this.projectSubject.asObservable();
 
-  constructor(private http: HttpClient, private router: Router, private fileService: FileService, private socket: SocketService) {}
+  constructor(private http: HttpClient, private router: Router,
+              private fileService: FileService, private socket: SocketService) {}
 
   public createProject(name: string) {
-    return this.http.post<Project>(`${this.apiUrl}project`, name, {observe: 'response', withCredentials: true})
+    return this.http.post<Project>(`${this.apiUrl}project`, name,
+      {observe: 'response', withCredentials: true})
   }
 
-  public joinProject(id: string) {
-    return this.http.post<Project>(`${this.apiUrl}project/join/${id}`, {}, {observe: 'response', withCredentials: true})
+  public joinProject(projectId: string) {
+    return this.http.post<Project>(`${this.apiUrl}project/join/${projectId}`, {},
+      {observe: 'response', withCredentials: true})
   }
 
-  public leaveProject(id: string) {
+  public leaveProject(projectId: string) {
     this.socket.disconnectFromSocket()
     this.fileService.clearAllData()
     void this.router.navigate(['/'])
     this.projectSubject.next(null);
-    this.http.post(`${this.apiUrl}project/leave/${id}`, {}, {observe: 'response', withCredentials: true}).subscribe()
+    this.http.post(`${this.apiUrl}project/leave/${projectId}`, {}, {observe: 'response', withCredentials: true}).subscribe()
   }
 
-  public deleteProject(id: string) {
+  public deleteProject(projectId: string) {
     this.projectSubject.next(null);
-    return this.http.delete(`${this.apiUrl}project/${id}`, {observe: 'response', withCredentials: true})
+    return this.http.delete(`${this.apiUrl}project/${projectId}`, {observe: 'response', withCredentials: true})
   }
 
-  public getProject(id: string) {
-    this.http.get<Project>(`${this.apiUrl}project/${id}`, {observe: 'response', withCredentials: true})
+  public getProject(projectId: string) {
+    this.http.get<Project>(`${this.apiUrl}project/${projectId}`, {observe: 'response', withCredentials: true})
       .subscribe({
           next: (response) => this.projectSubject.next(response.body),
           error: (e) => console.error(e)

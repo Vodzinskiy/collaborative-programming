@@ -29,7 +29,7 @@ export class FileService {
   openFilesObservable$: Observable<FileModel[]> = this.openFilesSubject.asObservable();
 
   constructor(public socket: FileSocketService, public dialog: MatDialog) {
-    this.socket.documentUpdated().subscribe(({operations, id}) => {
+    this.socket.fileUpdated().subscribe(({operations, id}) => {
       if (!this.openFilesSubject.value.some(file => file.id === id)) {
         this.applyChanges(id, operations);
       }

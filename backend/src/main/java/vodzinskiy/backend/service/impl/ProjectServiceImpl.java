@@ -2,7 +2,6 @@ package vodzinskiy.backend.service.impl;
 
 import com.corundumstudio.socketio.SocketIOServer;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import vodzinskiy.backend.dto.ProjectResponse;
 import vodzinskiy.backend.dto.Role;
@@ -21,7 +20,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
     private final UserService userService;
@@ -33,6 +31,20 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = new Project(name, owner);
         projectRepository.save(project);
         return new ProjectResponse(project.getId(), project.getName(), owner.getUsername(), new HashSet<>(), Role.OWNER);
+    }
+
+    @Override
+    public ProjectResponse joinProject(UUID projectId, UUID userId) {
+        Project project = getProject(projectId);
+        User user = userService.getUser(userId);
+        if (project.getMembers().contains(user) || project.getOwner().getId().equals(userId)) {
+            throw new AlreadyExistsException("You are already in the project");
+        } else {
+            project.addMember(user);
+            projectRepository.save(project);
+            updateMembersList(project);
+            return projectToProjectResponse(project, userId);
+        }
     }
 
     @Override
@@ -62,20 +74,6 @@ public class ProjectServiceImpl implements ProjectService {
         }
         server.getRoomOperations(projectId.toString()).sendEvent("projectUserListUpdated", new ArrayList<>());
         projectRepository.deleteById(projectId);
-    }
-
-    @Override
-    public ProjectResponse joinProject(UUID projectId, UUID userId) {
-        Project project = getProject(projectId);
-        User user = userService.getUser(userId);
-        if (project.getMembers().contains(user) || project.getOwner().getId().equals(userId)) {
-            throw new AlreadyExistsException("You are already in the project");
-        } else {
-            project.addMember(user);
-            projectRepository.save(project);
-            updateMembersList(project);
-            return projectToProjectResponse(project, userId);
-        }
     }
 
     @Override

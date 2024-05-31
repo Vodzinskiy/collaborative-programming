@@ -39,13 +39,13 @@ public class SocketHandler {
         client.getAllRooms().stream().findFirst().ifPresent(client::leaveRoom);
     }
 
-    @OnEvent("updateDocument")
-    public void onUpdateDocument(SocketIOClient client, List<Map<String, Object>> change, UUID documentId) {
+    @OnEvent("updateFile")
+    public void onUpdateFile(SocketIOClient client, List<Map<String, Object>> change, UUID fileId) {
         String projectId = client.getHandshakeData().getSingleUrlParam("projectId");
         if (projectId != null) {
             server.getRoomOperations(projectId).getClients().stream()
                     .filter(c -> !c.getSessionId().equals(client.getSessionId()))
-                    .forEach(c -> c.sendEvent("editorChanges", change, documentId));
+                    .forEach(c -> c.sendEvent("fileUpdates", change, fileId));
         }
     }
 

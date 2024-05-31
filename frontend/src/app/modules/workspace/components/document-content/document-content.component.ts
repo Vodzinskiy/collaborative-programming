@@ -23,7 +23,7 @@ export class DocumentContentComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.socket.documentUpdated(this.file.id).subscribe((operations: any) => {
+    this.socket.fileUpdated(this.file.id).subscribe((operations: any) => {
       if (this.editor && this.editor.getModel()) {
         this.isRemoteChange = true;
         this.editor.getModel().applyEdits(operations);
@@ -46,15 +46,14 @@ export class DocumentContentComponent implements OnInit {
   onEditorInit(editor: any) {
     this.editor = editor;
     this.editor.language = this.getLanguageFromExtension(this.file.name)
+
     this.editor.onDidChangeModelContent((event: any) => {
       if (!this.isRemoteChange && !event.isFlush) {
         const operations = event.changes.map((change: any) => ({
           range: change.range,
-          text: change.text,
-          rangeLength: change.rangeLength,
-          rangeOffset: change.rangeOffset,
+          text: change.text
         }));
-        this.socket.updateDocument(operations, this.file.id);
+        this.socket.updateFile(operations, this.file.id);
       }
       this.isRemoteChange = false;
     });

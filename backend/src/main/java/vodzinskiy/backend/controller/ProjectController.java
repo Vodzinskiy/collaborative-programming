@@ -45,5 +45,4 @@ public class ProjectController {
     public void deleteProject(@PathVariable UUID id, HttpSession session) {
         projectService.deleteProject(id, userService.getIdFromSession(session));
     }
-
 }

@@ -10,13 +10,13 @@ export class FileSocketService {
 
   constructor(public socket: SocketService) {}
 
-  updateDocument(change: any, documentId: string): void {
-    this.socket.getSocket().emit('updateDocument', change, documentId);
+  updateFile(change: any, fileId: string): void {
+    this.socket.getSocket().emit('updateFile', change, fileId);
   }
 
-  documentUpdated(fileId?: string):Observable<any> {
+  fileUpdated(fileId?: string): Observable<any> {
     return new Observable(observer => {
-      this.socket.getSocket().on('editorChanges', (operations: any, id: string) => {
+      this.socket.getSocket().on('fileUpdates', (operations: any, id: string) => {
         if (fileId === id) {
           observer.next(operations);
         }

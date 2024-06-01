@@ -32,7 +32,8 @@ export class FileTreeComponent implements OnInit, OnDestroy {
         next: f => this.tree = f
       }),
       this.fileSocket.onAddFile().subscribe((o: ProjectObject) => {
-        this.fileService.addFile(o.type, o.path, this.tree, o.fPath, o.name, false, o.id)
+        console.log(o.data)
+        this.fileService.addFile(o.type, o.path, this.tree, o.fPath, o.name, false, o.id, o.data)
       }),
       this.fileSocket.onRenameFile().subscribe(({path, newName}) => {
         this.rename(newName, path, this.tree);

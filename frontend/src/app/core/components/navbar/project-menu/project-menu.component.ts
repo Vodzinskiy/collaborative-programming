@@ -41,7 +41,6 @@ export class ProjectMenuComponent implements OnInit {
       if (result) {
         this.projectService.createProject(result).subscribe({
           next: (project) => {
-            //this.socket.connectToSocket(project.body?.id)
             void this.router.navigate(['/p', project.body?.id])
           }
         })
@@ -56,7 +55,6 @@ export class ProjectMenuComponent implements OnInit {
       if (result) {
         this.projectService.joinProject(result).subscribe({
           next: (project) => {
-            //this.socket.connectToSocket(project.body?.id)
             void this.router.navigate(['/p', project.body?.id])
           }
         })
@@ -66,13 +64,6 @@ export class ProjectMenuComponent implements OnInit {
 
   leaveProject() {
     this.projectService.leaveProject(this.id)
-      /*.subscribe({
-      next: () => {
-        this.socket.disconnectFromSocket()
-        this.fileService.clearAllData()
-        void this.router.navigate(['/'])
-      }
-    })*/
   }
 
   deleteProject() {

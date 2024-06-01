@@ -47,21 +47,21 @@ export class FileService {
     });
   }
 
-  public addFile(type: 'directory' | 'file', path: string, localTree: MonacoTreeElement[], fullPath: string, name: string, author: boolean = false, id: UUID | undefined = undefined) {
+  public addFile(type: 'directory' | 'file', path: string, localTree: MonacoTreeElement[], fullPath: string, name: string, author: boolean = false, id: UUID | undefined = undefined, data: string = '') {
     const spited = path.split('/');
     if (spited.length === 1) {
       if (path === '') {
         const newFullPath = `${fullPath}/${name}`;
-        localTree.push(this.file(name, type, newFullPath, id, author));
+        localTree.push(this.file(name, type, newFullPath, id, author, data));
       } else {
         const file = localTree.find((el) => el.name == path);
         if (!file) return;
         else if (file.content === undefined) {
           const newFullPath = `${fullPath}/${name}`;
-          localTree.push(this.file(name, type, newFullPath, id, author));
+          localTree.push(this.file(name, type, newFullPath, id, author, data));
         } else {
           const newFullPath = `${fullPath}/${path}/${name}`;
-          file.content.push(this.file(name, type, newFullPath, id, author));
+          file.content.push(this.file(name, type, newFullPath, id, author, data));
         }
       }
     } else {
@@ -72,19 +72,19 @@ export class FileService {
     }
   }
 
-  private file(name: string, type: 'directory' | 'file', fPath: string, id: UUID | undefined, author: boolean) {
+  private file(name: string, type: 'directory' | 'file', fPath: string, id: UUID | undefined, author: boolean, data: string = "") {
     const path = fPath.replace(/\/[^/]*$/, '').slice(1);
     if (type === 'file') {
-      let data = new FileModel(id, name, "", fPath.slice(1))
+      let file = new FileModel(id, name, data, fPath.slice(1))
       if (author) {
-        const obj: ProjectObject = {content: "", fPath: "", id: data.id, name: name, path: path, type: type};
+        const obj: ProjectObject = {data: data, fPath: "", id: file.id, name: name, path: path, type: type};
         this.socket.addFile(obj)
       }
-      this.openFile(data)
-      return data
+      this.openFile(file)
+      return file
     } else {
       if (author) {
-        const obj: ProjectObject = {content: "", fPath: "", name: name, path: path, type: type};
+        const obj: ProjectObject = {fPath: "", name: name, path: path, type: type};
         this.socket.addFile(obj)
       }
       return {name: name, content: [], type: type}
@@ -154,6 +154,7 @@ export class FileService {
 
   private findFileRecursive(items: any[], name: string, id?: UUID): any {
     for (const item of items) {
+      console.log(item.fPath + "  " + item.name)
       if (!item.content && (item.fPath === name || item.id === id)) {
         return item;
       }

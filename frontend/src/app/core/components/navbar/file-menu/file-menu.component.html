@@ -4,6 +4,8 @@
 <mat-menu #file="matMenu" class="mt-1">
   <button mat-menu-item (click)="newFile()">Новий Файл</button>
   <button mat-menu-item (click)="newDirectory()">Нова Директорія</button>
-  <button mat-menu-item>Відкрити</button>
-  <button mat-menu-item (click)="saveFiles()">Завантажити</button>
+  <button mat-menu-item (click)="openFileDialog()">Імпортувати Файли
+    <input type="file" #fileInput (change)="onFileSelected($event)" style="display:none;" multiple/>
+  </button>
+  <button mat-menu-item (click)="saveFiles()">Експортувати проєкт</button>
 </mat-menu>

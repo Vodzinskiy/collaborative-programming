@@ -18,13 +18,19 @@ export class ProjectService {
   constructor(private http: HttpClient, private router: Router,
               private fileService: FileService, private socket: SocketService) {}
 
-  public createProject(name: string) {
-    return this.http.post<Project>(`${this.apiUrl}project`, name,
+  public joinProject(projectId: string) {
+    if (this.projectSubject.value !== null) {
+      this.leaveProject(this.projectSubject.value?.id)
+    }
+    return this.http.post<Project>(`${this.apiUrl}project/join/${projectId}`, {},
       {observe: 'response', withCredentials: true})
   }
 
-  public joinProject(projectId: string) {
-    return this.http.post<Project>(`${this.apiUrl}project/join/${projectId}`, {},
+  public createProject(name: string) {
+    if (this.projectSubject.value !== null) {
+      this.leaveProject(this.projectSubject.value?.id)
+    }
+    return this.http.post<Project>(`${this.apiUrl}project`, name,
       {observe: 'response', withCredentials: true})
   }
 
@@ -36,7 +42,22 @@ export class ProjectService {
     this.http.post(`${this.apiUrl}project/leave/${projectId}`, {}, {observe: 'response', withCredentials: true}).subscribe()
   }
 
+  openProject(files: FileList) {
+    if (files) {
+      Array.from(files).forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          this.fileService.addFile('file', '', this.fileService.filesSubject.value, "", file.name, true, undefined, e.target.result)
+        };
+        reader.readAsText(<Blob>file);
+      });
+    }
+  }
+
   public deleteProject(projectId: string) {
+    this.socket.disconnectFromSocket()
+    this.fileService.clearAllData()
+    void this.router.navigate(['/'])
     this.projectSubject.next(null);
     return this.http.delete(`${this.apiUrl}project/${projectId}`, {observe: 'response', withCredentials: true})
   }

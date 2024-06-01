@@ -28,6 +28,7 @@ export class FileSocketService {
   }
 
   addFile(obj: ProjectObject) {
+    console.log(obj.data)
     this.socket.getSocket().emit('addFile', obj)
   }
 
@@ -42,6 +43,7 @@ export class FileSocketService {
   onAddFile(): Observable<ProjectObject>{
     return new Observable(observer => {
       this.socket.getSocket().on('addFile', (obj: ProjectObject) => {
+        console.log("==" + obj.data)
         observer.next(obj);
       });
     });

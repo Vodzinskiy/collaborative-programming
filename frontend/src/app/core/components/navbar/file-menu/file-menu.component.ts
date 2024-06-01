@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {FileService} from "../../../../modules/workspace/services/file.service";
 import {ProjectService} from "../../../services/project.service";
 
@@ -8,7 +8,7 @@ import {ProjectService} from "../../../services/project.service";
   styleUrl: './file-menu.component.scss'
 })
 export class FileMenuComponent implements OnInit {
-
+  @ViewChild('fileInput') fileInput?: ElementRef;
   hideMenu: boolean = true;
   tree: any[] = [];
 
@@ -24,11 +24,21 @@ export class FileMenuComponent implements OnInit {
   }
 
   newFile() {
-    this.fileService.createFile("file", '', this.tree, "")
+    this.fileService.createFile('file', '', this.tree, '')
   }
 
   newDirectory() {
-    this.fileService.createFile("directory", '', this.tree, "")
+    this.fileService.createFile('directory', '', this.tree, '')
+  }
+
+  openFileDialog() {
+    if (this.fileInput) {
+      this.fileInput.nativeElement.click();
+    }
+  }
+
+  onFileSelected(event: any) {
+    this.projectService.openProject(event.target.files)
   }
 
   saveFiles() {

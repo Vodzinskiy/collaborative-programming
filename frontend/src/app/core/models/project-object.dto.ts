@@ -5,6 +5,6 @@ export interface ProjectObject {
   type: 'directory' | 'file';
   path: string;
   name: string;
-  content?: string;
+  data?: string;
   fPath: string;
 }

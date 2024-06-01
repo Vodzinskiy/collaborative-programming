@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import vodzinskiy.backend.dto.ProjectResponse;
 import vodzinskiy.backend.dto.Role;
-import vodzinskiy.backend.exception.AlreadyExistsException;
 import vodzinskiy.backend.exception.ForbiddenException;
 import vodzinskiy.backend.exception.NotFoundException;
 import vodzinskiy.backend.model.Project;
@@ -37,14 +36,12 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectResponse joinProject(UUID projectId, UUID userId) {
         Project project = getProject(projectId);
         User user = userService.getUser(userId);
-        if (project.getMembers().contains(user) || project.getOwner().getId().equals(userId)) {
-            throw new AlreadyExistsException("You are already in the project");
-        } else {
+        if (!(project.getMembers().contains(user) && project.getOwner().getId().equals(userId))) {
             project.addMember(user);
             projectRepository.save(project);
-            updateMembersList(project);
-            return projectToProjectResponse(project, userId);
         }
+        updateMembersList(project);
+        return projectToProjectResponse(project, userId);
     }
 
     @Override

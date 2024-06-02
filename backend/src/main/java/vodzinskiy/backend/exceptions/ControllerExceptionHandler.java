@@ -1,4 +1,4 @@
-package vodzinskiy.backend.exception;
+package vodzinskiy.backend.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

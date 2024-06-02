@@ -1,4 +1,4 @@
-package vodzinskiy.backend.service.impl;
+package vodzinskiy.backend.services.impl;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,9 +12,9 @@ import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Service;
 import vodzinskiy.backend.dto.LoginRequest;
 import vodzinskiy.backend.dto.UserResponse;
-import vodzinskiy.backend.model.User;
-import vodzinskiy.backend.service.AuthenticationService;
-import vodzinskiy.backend.service.UserService;
+import vodzinskiy.backend.models.User;
+import vodzinskiy.backend.services.AuthenticationService;
+import vodzinskiy.backend.services.UserService;
 
 @Service
 @RequiredArgsConstructor

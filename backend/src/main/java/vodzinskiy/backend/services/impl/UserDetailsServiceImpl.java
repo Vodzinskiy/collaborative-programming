@@ -1,12 +1,12 @@
-package vodzinskiy.backend.service.impl;
+package vodzinskiy.backend.services.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import vodzinskiy.backend.model.User;
-import vodzinskiy.backend.repository.UserRepository;
+import vodzinskiy.backend.models.User;
+import vodzinskiy.backend.repositories.UserRepository;
 
 import java.util.ArrayList;
 

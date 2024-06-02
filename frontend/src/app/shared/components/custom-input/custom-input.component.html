@@ -10,7 +10,7 @@
     {{ requiredErrorMessage }}
   </mat-error>
   <mat-error *ngIf="control.errors?.['email']">
-    Введіть валідний email
+    Некоректна адреса електронної пошти
   </mat-error>
   <mat-error *ngIf="control.errors?.['incorrect'] && isPassword">
     Неправильний логін або пароль

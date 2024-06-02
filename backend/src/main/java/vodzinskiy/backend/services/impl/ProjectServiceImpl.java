@@ -1,17 +1,16 @@
-package vodzinskiy.backend.service.impl;
+package vodzinskiy.backend.services.impl;
 
 import com.corundumstudio.socketio.SocketIOServer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import vodzinskiy.backend.dto.ProjectResponse;
 import vodzinskiy.backend.dto.Role;
-import vodzinskiy.backend.exception.ForbiddenException;
-import vodzinskiy.backend.exception.NotFoundException;
-import vodzinskiy.backend.model.Project;
-import vodzinskiy.backend.model.User;
-import vodzinskiy.backend.repository.ProjectRepository;
-import vodzinskiy.backend.service.ProjectService;
-import vodzinskiy.backend.service.UserService;
+import vodzinskiy.backend.exceptions.ForbiddenException;
+import vodzinskiy.backend.exceptions.NotFoundException;
+import vodzinskiy.backend.models.Project;
+import vodzinskiy.backend.models.User;
+import vodzinskiy.backend.repositories.ProjectRepository;
+import vodzinskiy.backend.services.ProjectService;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,21 +20,19 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository projectRepository;
-    private final UserService userService;
     private final SocketIOServer server;
 
     @Override
-    public ProjectResponse createProject(UUID ownerId, String name) {
-        User owner = userService.getUser(ownerId);
+    public ProjectResponse createProject(User owner, String name) {
         Project project = new Project(name, owner);
         projectRepository.save(project);
         return new ProjectResponse(project.getId(), project.getName(), owner.getUsername(), new HashSet<>(), Role.OWNER);
     }
 
     @Override
-    public ProjectResponse joinProject(UUID projectId, UUID userId) {
+    public ProjectResponse joinProject(UUID projectId, User user) {
         Project project = getProject(projectId);
-        User user = userService.getUser(userId);
+        UUID userId = user.getId();
         if (!(project.getMembers().contains(user) && project.getOwner().getId().equals(userId))) {
             project.addMember(user);
             projectRepository.save(project);

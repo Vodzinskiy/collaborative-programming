@@ -1,0 +1,29 @@
+<div class="auth-window">
+  <mat-card class="d-flex flex-column align-items-center">
+    <mat-card-header class="mb-3">
+      <mat-card-title>Профіль</mat-card-title>
+    </mat-card-header>
+    <form [formGroup]="profileForm" class="d-flex flex-column align-items-center">
+      <mat-form-field class="profile-input-field">
+        <input matInput placeholder="Ім'я" formControlName="username">
+      </mat-form-field>
+      <mat-form-field class="profile-input-field">
+        <input matInput placeholder="Електронна пошта" formControlName="email">
+        <mat-error *ngIf="profileForm.controls.email.errors?.['exists']">
+          Користувач з такою адресою ел. пошти вже існує
+        </mat-error>
+        <mat-error *ngIf="profileForm.controls.email.errors?.['email']">
+          Некоректна адреса електронної пошти
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="profile-input-field">
+        <input matInput placeholder="Новий пароль" formControlName="password">
+      </mat-form-field>
+      <mat-card-actions class="d-flex justify-content-evenly w-100">
+        <button routerLink="" mat-stroked-button>Скасувати</button>
+        <button (click)="delete()" color="warn" mat-raised-button>Видалити</button>
+        <button (click)="save()" mat-raised-button>Зберегти</button>
+      </mat-card-actions>
+    </form>
+  </mat-card>
+</div>

@@ -1,4 +1,4 @@
-package vodzinskiy.backend.controller;
+package vodzinskiy.backend.controllers;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -6,8 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vodzinskiy.backend.dto.ProjectResponse;
-import vodzinskiy.backend.service.ProjectService;
-import vodzinskiy.backend.service.UserService;
+import vodzinskiy.backend.services.ProjectService;
+import vodzinskiy.backend.services.UserService;
 
 import java.util.UUID;
 
@@ -21,12 +21,12 @@ public class ProjectController {
     @PostMapping
     public ResponseEntity<ProjectResponse> createProject(@RequestBody String name, HttpSession session) {
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                projectService.createProject(userService.getIdFromSession(session), name));
+                projectService.createProject(userService.getUser(userService.getIdFromSession(session)), name));
     }
 
     @PostMapping("/join/{id}")
     public ResponseEntity<ProjectResponse> joinProject(@PathVariable UUID id, HttpSession session) {
-        return ResponseEntity.ok(projectService.joinProject(id, userService.getIdFromSession(session)));
+        return ResponseEntity.ok(projectService.joinProject(id, userService.getUser(userService.getIdFromSession(session))));
     }
 
     @PostMapping("/leave/{id}")

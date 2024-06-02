@@ -9,7 +9,7 @@ import {NavigationStart, Router} from "@angular/router";
 export class AppComponent implements OnInit {
   title = 'frontend';
   navBar: boolean = true;
-  private hiddenRoutes = ['/login', '/signup'];
+  private hiddenRoutes = ['/login', '/signup', '/profile'];
 
   constructor(private router: Router) {}
 

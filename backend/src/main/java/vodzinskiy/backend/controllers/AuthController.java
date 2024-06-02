@@ -1,4 +1,4 @@
-package vodzinskiy.backend.controller;
+package vodzinskiy.backend.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import vodzinskiy.backend.dto.LoginRequest;
 import vodzinskiy.backend.dto.UserResponse;
-import vodzinskiy.backend.service.AuthenticationService;
+import vodzinskiy.backend.services.AuthenticationService;
 
 
 @RestController

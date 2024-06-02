@@ -12,7 +12,7 @@ import {SocketService} from "./socket.service";
 })
 export class ProjectService {
   private apiUrl = env.API_URL;
-  private projectSubject = new BehaviorSubject<Project | null>(null);
+  public projectSubject = new BehaviorSubject<Project | null>(null);
   public project$ = this.projectSubject.asObservable();
 
   constructor(private http: HttpClient, private router: Router,

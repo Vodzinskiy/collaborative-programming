@@ -3,6 +3,7 @@ import {BehaviorSubject, Observable, tap} from "rxjs";
 import {env} from "../../../../environments/environment";
 import {HttpClient} from "@angular/common/http";
 import {User} from "../../../core/models/user.dto";
+import {ProjectService} from "../../../core/services/project.service";
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class AuthService {
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   public isAuthenticated$: Observable<boolean> = this.isAuthenticatedSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private projectService: ProjectService) {}
 
   signup(userBody: User): Observable<any> {
     return this.http.post(`${this.apiUrl}auth/signup`, userBody, {observe: 'response', withCredentials: true});
@@ -23,6 +24,10 @@ export class AuthService {
   }
 
   signout(): Observable<any> {
+    let id = this.projectService.projectSubject.value?.id
+    if (id) {
+      this.projectService.leaveProject(id)
+    }
     return this.http.post(`${this.apiUrl}auth/signout`,{},{observe: 'response', withCredentials: true});
   }
 

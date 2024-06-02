@@ -35,7 +35,7 @@ export class ProjectMenuComponent implements OnInit {
   }
 
   createProject() {
-    const data: DialogData = {buttonTitle: "Створити", placeholder: "Назва", title: "Новий Проект"}
+    const data: DialogData = {buttonTitle: "Створити", placeholder: "Назва", title: "Новий Проєкт"}
     const dialogRef = this.dialog.open(DialogComponent, {data});
     dialogRef.afterClosed().subscribe(result => {
       if (result) {

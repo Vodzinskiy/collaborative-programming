@@ -154,7 +154,6 @@ export class FileService {
 
   private findFileRecursive(items: any[], name: string, id?: UUID): any {
     for (const item of items) {
-      console.log(item.fPath + "  " + item.name)
       if (!item.content && (item.fPath === name || item.id === id)) {
         return item;
       }

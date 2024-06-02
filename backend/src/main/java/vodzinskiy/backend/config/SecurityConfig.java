@@ -23,9 +23,9 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import vodzinskiy.backend.model.User;
-import vodzinskiy.backend.repository.UserRepository;
-import vodzinskiy.backend.service.impl.OAuth2UserService;
+import vodzinskiy.backend.models.User;
+import vodzinskiy.backend.repositories.UserRepository;
+import vodzinskiy.backend.services.impl.OAuth2UserService;
 
 import java.util.List;
 import java.util.Optional;

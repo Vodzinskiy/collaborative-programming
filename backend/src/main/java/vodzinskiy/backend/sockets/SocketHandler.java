@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import vodzinskiy.backend.dto.ProjectObject;
-import vodzinskiy.backend.model.File;
+import vodzinskiy.backend.models.File;
 
 import java.util.*;
 

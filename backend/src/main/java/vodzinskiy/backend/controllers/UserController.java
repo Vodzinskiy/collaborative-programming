@@ -1,4 +1,4 @@
-package vodzinskiy.backend.controller;
+package vodzinskiy.backend.controllers;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -7,16 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vodzinskiy.backend.dto.UserRequest;
 import vodzinskiy.backend.dto.UserResponse;
-import vodzinskiy.backend.model.User;
-import vodzinskiy.backend.repository.UserRepository;
-import vodzinskiy.backend.service.UserService;
+import vodzinskiy.backend.models.User;
+import vodzinskiy.backend.services.UserService;
 
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
 public class UserController {
-
-    private final UserRepository userRepository;
     private final UserService userService;
 
     @PostMapping("/auth/signup")
@@ -33,8 +30,7 @@ public class UserController {
 
     @DeleteMapping("/user")
     public ResponseEntity<Void> deleteUser(HttpSession session) {
-        userService.getUser(userService.getIdFromSession(session));
-        userRepository.deleteById(userService.getIdFromSession(session));
+        userService.deleteUser(userService.getIdFromSession(session));
         return ResponseEntity.ok().build();
     }
 

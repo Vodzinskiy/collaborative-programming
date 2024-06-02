@@ -1,9 +1,9 @@
-package vodzinskiy.backend.service;
+package vodzinskiy.backend.services;
 
 import jakarta.servlet.http.HttpSession;
 import vodzinskiy.backend.dto.UserRequest;
 import vodzinskiy.backend.dto.UserResponse;
-import vodzinskiy.backend.model.User;
+import vodzinskiy.backend.models.User;
 
 import java.util.UUID;
 
@@ -13,4 +13,5 @@ public interface UserService {
     User getUser(UUID id);
     User getUserByEmail(String email);
     UUID getIdFromSession(HttpSession session);
+    void deleteUser(UUID id);
 }

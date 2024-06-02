@@ -1,4 +1,4 @@
-package vodzinskiy.backend.exception;
+package vodzinskiy.backend.exceptions;
 
 public class ForbiddenException extends RuntimeException{
     public ForbiddenException(String message) {

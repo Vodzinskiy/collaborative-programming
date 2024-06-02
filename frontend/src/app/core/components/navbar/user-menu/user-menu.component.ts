@@ -9,20 +9,17 @@ import {UserService} from "../../../services/user.service";
 })
 export class UserMenuComponent implements OnInit {
   profileLetter: string = ''
-  userName: string = ''
+  username: string = ''
 
   constructor(public authService: AuthService, public userService: UserService) {}
 
   ngOnInit(): void {
-    this.userService.getUser()
-    this.userService.user$.subscribe({
+    this.userService.getUser().subscribe({
       next: user => {
-        this.userName = user?.username ?? ''
-        this.profileLetter = this.userName.length > 0 ? this.userName.charAt(0).toUpperCase() : ''
+        this.username = user.body?.username ?? ''
+        this.profileLetter = this.username.length > 0 ? this.username.charAt(0).toUpperCase() : ''
       }
     })
-    /*this.userName = this.authService.user?.username ?? ''
-    this.profileLetter = this.userName.length > 0 ? this.userName.charAt(0).toUpperCase() : ''*/
   }
 
   signout() {

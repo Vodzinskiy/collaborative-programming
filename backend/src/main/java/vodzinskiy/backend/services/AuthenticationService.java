@@ -1,4 +1,4 @@
-package vodzinskiy.backend.service;
+package vodzinskiy.backend.services;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

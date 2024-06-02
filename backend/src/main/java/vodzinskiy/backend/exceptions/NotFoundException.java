@@ -1,4 +1,4 @@
-package vodzinskiy.backend.exception;
+package vodzinskiy.backend.exceptions;
 
 public class NotFoundException extends RuntimeException {
     public NotFoundException(String message) {

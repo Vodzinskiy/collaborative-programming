@@ -2,7 +2,6 @@ import {Component} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {AuthService} from "../../services/auth.service";
 import {User} from "../../../../core/models/user.dto";
-import {UserService} from "../../../../core/services/user.service";
 import {Router} from "@angular/router";
 
 @Component({
@@ -16,7 +15,7 @@ export class LoginComponent {
     password: new FormControl('', Validators.required)
   });
 
-  constructor(private authService: AuthService, private userService: UserService, private router: Router) {
+  constructor(private authService: AuthService, private router: Router) {
   }
 
   getControl(name: string): FormControl {
@@ -24,23 +23,20 @@ export class LoginComponent {
   }
 
   onSubmit() {
-    if (this.signinForm.valid) {
-      const user: User = {
-        email: this.signinForm.get('email')?.value || '',
-        password: this.signinForm.get('password')?.value || ''
-      };
-      this.authService.signin(user).subscribe({
-        next: response => {
-          response.body && this.userService.setUser(response.body);
-          void this.router.navigate(['/'])
-        },
-        error: err => {
-          if (err.status === 401) {
-            this.signinForm.controls.email.setErrors({'incorrect': true})
-            this.signinForm.controls.password.setErrors({'incorrect': true})
-          }
+    const user: User = {
+      email: this.signinForm.get('email')?.value || '',
+      password: this.signinForm.get('password')?.value || ''
+    };
+    this.authService.signin(user).subscribe({
+      next: () => {
+        void this.router.navigate(['/'])
+      },
+      error: err => {
+        if (err.status === 401) {
+          this.signinForm.controls.email.setErrors({'incorrect': true})
+          this.signinForm.controls.password.setErrors({'incorrect': true})
         }
-      });
-    }
+      }
+    });
   }
 }

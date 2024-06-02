@@ -3,7 +3,6 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import {AuthService} from "../../services/auth.service";
 import {User} from "../../../../core/models/user.dto";
 import {Router} from "@angular/router";
-import {UserService} from "../../../../core/services/user.service";
 
 @Component({
   selector: 'app-signup',
@@ -17,7 +16,7 @@ export class SignupComponent {
     password: new FormControl('', Validators.required)
   });
 
-  constructor(private router: Router, private authService: AuthService, private userService: UserService) {}
+  constructor(private router: Router, private authService: AuthService) {}
 
   getControl(name: string): FormControl {
     return this.signupForm.get(name) as FormControl;
@@ -33,8 +32,7 @@ export class SignupComponent {
       this.authService.signup(user).subscribe({
         next: () => {
           this.authService.signin(user).subscribe({
-            next: response => {
-              response.body && this.userService.setUser(response.body);
+            next: () => {
               void this.router.navigate(['/'])
             }
           });

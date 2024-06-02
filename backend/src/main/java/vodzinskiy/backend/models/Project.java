@@ -1,4 +1,4 @@
-package vodzinskiy.backend.model;
+package vodzinskiy.backend.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;

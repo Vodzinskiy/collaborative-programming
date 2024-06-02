@@ -1,4 +1,4 @@
-package vodzinskiy.backend.exception;
+package vodzinskiy.backend.exceptions;
 
 public class AlreadyExistsException extends RuntimeException {
     public AlreadyExistsException(String message) {

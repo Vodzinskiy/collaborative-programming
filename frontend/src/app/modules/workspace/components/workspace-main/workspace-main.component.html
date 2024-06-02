@@ -1,12 +1,12 @@
 <div class="d-flex flex-row" style="height: calc(100vh - 48px)">
-  <div *ngIf="leftVisible" class="d-flex flex-column overflow-x-hidden" [style.width.px]="leftWidth">
+  <div *ngIf="leftVisible" class="d-flex overflow-x-hidden position-relative" [style.width.px]="leftWidth">
     <app-file-tree class="d-flex flex-grow-1"></app-file-tree>
     <button class="button-close" (click)="toggleLeft()">
       <mat-icon>keyboard_arrow_left</mat-icon>
     </button>
   </div>
   <div *ngIf="leftVisible" class="resizer flex-shrink-0" (mousedown)="startResizing()"></div>
-  <div class="d-flex flex-grow-1" style="background: #1E1E1E">
+  <div class="d-flex flex-grow-1 position-relative" style="background: #1E1E1E">
     <button *ngIf="!leftVisible" class="button-open" (click)="toggleLeft()">
       <mat-icon>keyboard_arrow_right</mat-icon>
     </button>

@@ -1,4 +1,4 @@
-package vodzinskiy.backend.service.impl;
+package vodzinskiy.backend.services.impl;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -6,14 +6,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vodzinskiy.backend.dto.UserRequest;
 import vodzinskiy.backend.dto.UserResponse;
-import vodzinskiy.backend.exception.AlreadyExistsException;
-import vodzinskiy.backend.exception.ForbiddenException;
-import vodzinskiy.backend.exception.NotFoundException;
-import vodzinskiy.backend.mapper.UserMapper;
-import vodzinskiy.backend.model.User;
-import vodzinskiy.backend.repository.UserRepository;
-import vodzinskiy.backend.service.UserService;
+import vodzinskiy.backend.exceptions.AlreadyExistsException;
+import vodzinskiy.backend.exceptions.ForbiddenException;
+import vodzinskiy.backend.exceptions.NotFoundException;
+import vodzinskiy.backend.mappers.UserMapper;
+import vodzinskiy.backend.models.Project;
+import vodzinskiy.backend.models.User;
+import vodzinskiy.backend.repositories.ProjectRepository;
+import vodzinskiy.backend.repositories.UserRepository;
+import vodzinskiy.backend.services.ProjectService;
+import vodzinskiy.backend.services.UserService;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,14 +25,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final ProjectRepository projectRepository;
+    private final ProjectService projectService;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserResponse createUser(UserRequest request) {
-        throwIfUserExists(request.email(), "email");
-        throwIfUserExists(request.username(), "username");
-
+        checkEmailExists(request.email());
         User user = new User(request.username(), request.email(), passwordEncoder.encode(request.password()), null);
         userRepository.save(user);
         return new UserResponse(user.getId(), user.getUsername(), user.getEmail());
@@ -55,14 +59,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse editUser(UUID id, UserRequest request) {
         User user = getUser(id);
+        if (!user.getEmail().equals(request.email())) {
+            checkEmailExists(request.email());
+        }
         userMapper.updateUserFromUserRequest(request, user);
+        if (request.password() != null && !request.password().isEmpty()) {
+            user.setPassword(passwordEncoder.encode(request.password()));
+        }
         userRepository.save(user);
         return new UserResponse(user.getId(), user.getUsername(), user.getEmail());
     }
 
-    private void throwIfUserExists(String value, String fieldName) {
-        if (userRepository.existsByEmailOrUsername(value, value)) {
-            throw new AlreadyExistsException(String.format("User with %s \"%s\" already exists", fieldName, value));
+    public void checkEmailExists(String email) {
+        if (userRepository.existsByEmail(email)) {
+            throw new AlreadyExistsException(String.format("User with email \"%s\" already exists", email));
         }
     }
 
@@ -72,5 +82,19 @@ public class UserServiceImpl implements UserService {
         } catch (Exception e) {
             throw new ForbiddenException("You must be authenticated for this action");
         }
+    }
+
+    @Override
+    public void deleteUser(UUID id) {
+        getUser(id);
+        List<Project> ownedProjects = projectRepository.findByOwnerId(id);
+        for (Project project : ownedProjects) {
+            projectService.deleteProject(project.getId(), id);
+        }
+        List<Project> joinedProjects = projectRepository.findByMembersId(id);
+        for (Project project : joinedProjects) {
+            projectService.leaveProject(project.getId(), id);
+        }
+        userRepository.deleteById(id);
     }
 }

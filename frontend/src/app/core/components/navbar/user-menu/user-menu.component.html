@@ -1,5 +1,4 @@
 <button mat-mini-fab style="background: #362f36" [matMenuTriggerFor]="profile">{{ profileLetter }}</button>
-
 <mat-menu #profile="matMenu" class="mt-1 d-flex">
   <button mat-menu-item routerLink="/profile">Профіль</button>
   <button mat-menu-item (click)="signout()">Вийти</button>

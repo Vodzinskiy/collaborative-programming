@@ -21,7 +21,6 @@ const routes: Routes = [{
     redirectTo: ''
   }]
 
-
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],

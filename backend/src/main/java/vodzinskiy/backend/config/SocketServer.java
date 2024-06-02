@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class SocketServer implements CommandLineRunner {
-
     private final SocketIOServer server;
 
     @Override

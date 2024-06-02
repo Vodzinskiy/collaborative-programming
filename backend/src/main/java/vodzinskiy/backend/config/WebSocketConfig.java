@@ -40,5 +40,4 @@ public class WebSocketConfig  {
     public SpringAnnotationScanner springAnnotationScanner() {
         return new SpringAnnotationScanner(socketIOServer());
     }
-
 }

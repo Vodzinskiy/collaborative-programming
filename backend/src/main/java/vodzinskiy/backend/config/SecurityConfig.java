@@ -86,7 +86,7 @@ public class SecurityConfig {
                 )
                 .logout(logout -> logout.logoutUrl("/api/auth/signout")
                         .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
-                        .logoutSuccessUrl("http://localhost:4200"))
+                        .logoutSuccessUrl(System.getenv("FRONTEND_URL")))
                 .authenticationProvider(authenticationProvider())
                 .httpBasic(withDefaults())
                 .sessionManagement(sessionManagement -> sessionManagement
@@ -97,7 +97,7 @@ public class SecurityConfig {
                             Optional<User> user = userRepository.findByProviderId(authentication.getName());
                             if (user.isPresent()) {
                                 request.getSession().setAttribute("userID", user.get().getId());
-                                response.sendRedirect("http://localhost:4200");
+                                response.sendRedirect(System.getenv("FRONTEND_URL"));
                             }
                         })
                         .userInfoEndpoint(userInfo ->

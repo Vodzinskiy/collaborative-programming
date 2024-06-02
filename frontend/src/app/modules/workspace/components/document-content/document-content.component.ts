@@ -46,7 +46,6 @@ export class DocumentContentComponent implements OnInit {
   onEditorInit(editor: any) {
     this.editor = editor;
     this.editor.language = this.getLanguageFromExtension(this.file.name)
-
     this.editor.onDidChangeModelContent((event: any) => {
       if (!this.isRemoteChange && !event.isFlush) {
         const operations = event.changes.map((change: any) => ({
